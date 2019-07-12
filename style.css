@@ -5,7 +5,7 @@
 
 }
 
-header
+body
 {
   background-image: url(background.jpg);
   height: 100vh;
@@ -26,15 +26,15 @@ header
 }
 
 .navigation li a{
-  color: black;
+  color: #5a5d7a;
   text-decoration: none;
   padding: 1vw 4vh;
-  font-family: "Roboto", sans-serif;
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
   font-size: 1.5vw;
 }
 
 .navigation li a:hover{
-  border: 1px solid black;
+  border: 1px solid #5a5d7a;
 
 }
 
@@ -47,51 +47,38 @@ header
   border-radius: 50%;
 }
 
-.line {
-  color: green;
-  width: 24;
-  top: 30%;
-  margin: auto;
-  border-right: 2vw solid rgba(255, 255, 255, 0.75);
-  text-align: center;
+.header h1 {
+  font-family: Monaco,Consolas,Lucida Console,monospace;
+  color: DodgerBlue;
+  padding-left: 20vw;
+  border-right: .15em solid white;
+  transform: translateY(30vh);
+  font-size: 3vw;
+
   white-space: nowrap;
   overflow: hidden;
-  transform: translateY(30vh);
-  font-size: 5vw;
+  width: auto;
+  display: inline-block;
+  margin: 0 auto;
+  letter-spacing: .15em;
+  animation: typing 4s steps(50, end),
+			 blink-caret 1s step-end infinite;
 }
 
-/* Animation */
-.anim-typewriter {
-      animation: typewriter 1s steps(10) 1s 1 normal both,
-      blinkTextCussor 900ms steps(10) infinite normal both;
-
+@keyframes typing{
+  from {max-width: 0}
+  to {max-width: 100%}
 }
 
-@keyframes typewriter {
-      from {
-            width: 0vw;
-      }
-      to {
-            width: 8.9em;
-      }
+@keyframes blink-caret{
+  from, to {border-color: transparent}
+  50% {border-color: DodgerBlue}
 }
 
-@media(max-width: 768px) {
-      @keyframes typewriter {
-            from {
-                  width: 0;
-            }
-            to {
-                  width: 10em;
-            }
-      }
-}
-
-@keyframes blinkTextCussor {
-      from {
-            border-right-color: green;
-      }
-      to {
-            border-right-color: transparent;
-      }
+p{
+  color: #5a5d7a;
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.5vw;
+  text-align: center;
+  transform: translateY(50vh);
 }
