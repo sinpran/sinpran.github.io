@@ -11,24 +11,29 @@ body
   height: 100vh;
   background-size: cover;
   background-position: center;
-
 }
 
-.navigation{
+.navigation {
   float: right;
   list-style: none;
-  margin-top: 7vh;
-  margin-right: 7vw
+  margin: 0;
+  padding: 1vh;
+  overflow: hidden;
+  padding-right: 7vw;
+  width: 100%;
 }
 
 .navigation li{
+  float: right;
   display: inline-block;
 }
 
 .navigation li a{
+  display: block;
   color: #5a5d7a;
+  text-align: center;
   text-decoration: none;
-  padding: 1vw 4vh;
+  padding: 1vw 3vh;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
   font-size: 1.5vw;
 }
@@ -50,9 +55,9 @@ body
 .header h1 {
   font-family: Monaco,Consolas,Lucida Console,monospace;
   color: DodgerBlue;
-  padding-left: 20vw;
+  padding-left: 25vw;
   border-right: .15em solid white;
-  transform: translateY(30vh);
+  transform: translateY(29vh);
   font-size: 3vw;
 
   white-space: nowrap;
@@ -76,9 +81,12 @@ body
 }
 
 p{
+  line-height: 1.5em;
+  transform: translateY(39vh);
   color: #5a5d7a;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
-  font-size: 1.5vw;
-  text-align: center;
-  transform: translateY(50vh);
+  font-size: 1.3em;
+  word-wrap: break-word;
+  width: 70%;
+  padding-left: 15vw;
 }
