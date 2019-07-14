@@ -35,7 +35,7 @@ body
   text-decoration: none;
   padding: 1vw 3vh;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
-  font-size: 1.5vw;
+  font-size: 1.1em;
 }
 
 .navigation li a:hover{
@@ -55,10 +55,10 @@ body
 .header h1 {
   font-family: Monaco,Consolas,Lucida Console,monospace;
   color: DodgerBlue;
-  padding-left: 25vw;
+  padding-left: 15vw;
   border-right: .15em solid white;
   transform: translateY(29vh);
-  font-size: 3vw;
+  font-size: 4vw;
 
   white-space: nowrap;
   overflow: hidden;
