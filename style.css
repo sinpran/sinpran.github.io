@@ -95,8 +95,8 @@ body
 }
 
 #aboutMe{
-  margin-top: 25%;
-  padding-bottom: 5%;
+  transform: translateY(50vh);
+  padding-bottom: 2%;
   text-align: center;
   color: #5a5d7a;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
@@ -106,11 +106,13 @@ body
 }
 
 .me{
-  line-height: 1em;
+  transform: translateY(52vh);
+  line-height: 1.3em;
   color: #5a5d7a;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
-  font-size: 1.3em;
+  font-size: 1.2em;
   word-wrap: break-word;
   width: 70%;
   padding-left: 15vw;
+  position: relative;
 }
