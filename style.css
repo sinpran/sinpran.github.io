@@ -5,6 +5,9 @@
 
 }
 
+html{
+  scroll-behavior: smooth;
+}
 body
 {
   background-image: url(background.jpg);
@@ -80,9 +83,30 @@ body
   50% {border-color: DodgerBlue}
 }
 
-p{
+.intro{
   line-height: 1.5em;
   transform: translateY(39vh);
+  color: #5a5d7a;
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.3em;
+  word-wrap: break-word;
+  width: 70%;
+  padding-left: 15vw;
+}
+
+#aboutMe{
+  margin-top: 25%;
+  padding-bottom: 5%;
+  text-align: center;
+  color: #5a5d7a;
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.5em;
+  text-decoration: underline dotted #5a5d7a;
+  text-underline-position: under;
+}
+
+.me{
+  line-height: 1em;
   color: #5a5d7a;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
   font-size: 1.3em;
