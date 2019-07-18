@@ -96,16 +96,22 @@ body
 
 #aboutMe{
   transform: translateY(50vh);
-  padding-bottom: 2%;
   text-align: center;
   color: #5a5d7a;
+  padding-bottom: 2%;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
   font-size: 1.5em;
   text-decoration: underline dotted #5a5d7a;
   text-underline-position: under;
+
 }
 
-.me{
+.text{
+  background: url(aboutMeBackground.jpg) no-repeat 14vw;
+  background-size: cover;
+  filter: drop-shadow(0 0 20px #333);
+  padding: 1%;
+
   transform: translateY(52vh);
   line-height: 1.3em;
   color: #5a5d7a;
@@ -113,6 +119,5 @@ body
   font-size: 1.2em;
   word-wrap: break-word;
   width: 70%;
-  padding-left: 15vw;
-  position: relative;
+  padding-left: 15vw
 }
