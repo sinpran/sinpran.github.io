@@ -57,7 +57,7 @@ body
 
 .header h1 {
   font-family: Monaco,Consolas,Lucida Console,monospace;
-  color: DodgerBlue;
+  color: SandyBrown;
   padding-left: 15vw;
   border-right: .15em solid white;
   transform: translateY(29vh);
@@ -80,7 +80,7 @@ body
 
 @keyframes blink-caret{
   from, to {border-color: transparent}
-  50% {border-color: DodgerBlue}
+  50% {border-color: SandyBrown}
 }
 
 .intro{
@@ -109,7 +109,8 @@ body
 .text{
   background: url(aboutMeBackground.jpg) no-repeat 14vw;
   background-size: cover;
-  filter: drop-shadow(0 0 20px #333);
+  filter: drop-shadow(0 0 5px #333);
+  border-radius: 1%;
   padding: 1%;
 
   transform: translateY(52vh);
@@ -120,4 +121,56 @@ body
   word-wrap: break-word;
   width: 70%;
   padding-left: 15vw
+}
+
+.text a{
+  color: DarkCyan;
+  text-decoration: none;
+}
+
+.text a:hover{
+  color: DeepSkyBlue;
+}
+
+#projects{
+  transform: translateY(65vh);
+  text-align: center;
+  color: #5a5d7a;
+  padding-bottom: 2%;
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.5em;
+  text-decoration: underline dotted #5a5d7a;
+  text-underline-position: under;
+
+}
+
+#contact{
+  transform: translateY(80vh);
+  text-align: center;
+  color: #5a5d7a;
+  padding-bottom: 2%;
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.5em;
+  text-decoration: underline dotted #5a5d7a;
+  text-underline-position: under;
+}
+
+.contactInfo{
+  transform: translateY(100vh);
+  line-height: 1.3em;
+  color: #5a5d7a;
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.2em;
+  word-wrap: break-word;
+  width: 100%;
+  text-align: center;
+}
+
+.contactInfo a{
+  color: DarkCyan;
+  text-decoration: none;
+}
+
+.contactInfo a:hover{
+  color: DeepSkyBlue;
 }
