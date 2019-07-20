@@ -111,7 +111,7 @@ body
   background-size: cover;
   filter: drop-shadow(0 0 5px #333);
   border-radius: 1%;
-  padding: 1%;
+  padding: 1.5%;
 
   transform: translateY(52vh);
   line-height: 1.3em;
@@ -164,6 +164,7 @@ body
   word-wrap: break-word;
   width: 100%;
   text-align: center;
+  padding-bottom: 2%;
 }
 
 .contactInfo a{
