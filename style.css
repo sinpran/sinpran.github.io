@@ -106,7 +106,7 @@ body
 
 }
 
-.text{
+.container{
   background: url(aboutMeBackground.jpg) no-repeat 14vw;
   background-size: cover;
   filter: drop-shadow(0 0 5px #333);
@@ -123,12 +123,12 @@ body
   padding-left: 15vw
 }
 
-.text a{
+.container a{
   color: DarkCyan;
   text-decoration: none;
 }
 
-.text a:hover{
+.container a:hover{
   color: DeepSkyBlue;
 }
 
@@ -156,7 +156,7 @@ body
 }
 
 .contactInfo{
-  transform: translateY(100vh);
+  transform: translateY(85vh);
   line-height: 1.3em;
   color: #5a5d7a;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
@@ -168,7 +168,7 @@ body
 }
 
 .contactInfo a{
-  color: DarkCyan;
+  color: #5a5d7a;
   text-decoration: none;
 }
 
