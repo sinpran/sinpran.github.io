@@ -8,6 +8,7 @@
 html{
   scroll-behavior: smooth;
 }
+
 body
 {
   background-image: url(background.jpg);
@@ -161,7 +162,7 @@ body
   color: #5a5d7a;
   padding-left: 5vw;
   padding-top: 2vh;
-  width: 100%;
+  width: 50%;
 }
 
 .box{
@@ -196,7 +197,7 @@ body
   font-size: 1.3em;
   line-height: 1.3em;
   padding-top: 2vh;
-  padding-left: 5vw;
+  padding-left: 9vw;
   text-align: center;
 }
 
@@ -231,7 +232,7 @@ body
   color: #5a5d7a;
   padding-left: 5vw;
   padding-top: 2vh;
-  width: 100%;
+  width: 50%;
 }
 
 .boxTwo{
