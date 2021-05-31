@@ -355,8 +355,78 @@ body
   color: DeepSkyBlue;
 }
 
+.projectsContainerFour{
+  background: url(aboutMeBackground.jpg) no-repeat 14vw;
+  background-size: cover;
+  filter: drop-shadow(0 0 5px #333);
+  border-radius: 25px;
+  padding: 1.5%;
+  transform: translateY(91vh);
+  width: 70%;
+  padding-left: 15vw
+}
+
+.projectTextHeaderFour{
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.8em;
+  color: #5a5d7a;
+  padding-left: 5vw;
+  padding-top: 2vh;
+  width: 50%;
+}
+
+.boxFour{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.projectTextFour{
+  line-height: 1.5em;
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.3em;
+  color: #5a5d7a;
+  padding-left: 5vw;
+  padding-top: 5vh;
+  word-wrap: break-word;
+  width: 50%;
+  max-width: 100%;
+}
+
+.projectTextFour li{
+  text-decoration: none;
+  list-style: none;
+  margin: 5px;
+  display: inline-block;
+  padding: 1vh 1vw;
+  border: 2px solid SandyBrown;
+  border-radius: 25px;
+
+}
+.projectLinksFour{
+  font-family: Camphor,Open Sans,Segoe UI,sans-serif;
+  font-size: 1.3em;
+  line-height: 1.3em;
+  padding-top: 15vh;
+  padding-left: 10vw;
+  text-align: center;
+}
+
+.projectLinksFour a{
+  color: #5a5d7a;
+  text-decoration: none;
+  display: block;
+  margin: 0;
+  padding: 1vh 1vw;
+  border: 2px solid HotPink;
+  border-radius: 25px;
+}
+
+.projectLinksFour a:hover{
+  color: DeepSkyBlue;
+}
+
 #contact{
-  transform: translateY(88vh);
+  transform: translateY(96vh);
   text-align: center;
   color: #5a5d7a;
   padding-bottom: 2%;
@@ -367,7 +437,7 @@ body
 }
 
 .contactInfo{
-  transform: translateY(93vh);
+  transform: translateY(101vh);
   line-height: 1.3em;
   color: #5a5d7a;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
