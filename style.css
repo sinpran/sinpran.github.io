@@ -49,11 +49,12 @@ body
 
 .logo img
 {
-  width: 10vw;
+  position: absolute;
+  filter: drop-shadow(0 0 5px #333);
+  transform: translateY(35vh);
+  padding-left: 63vw;
+  width: 18vw;
   height: auto;
-  float: left;
-  padding: 15px 30px;
-  border-radius: 50%;
 }
 
 .header h1 {
@@ -89,9 +90,9 @@ body
   transform: translateY(39vh);
   color: #5a5d7a;
   font-family: Camphor,Open Sans,Segoe UI,sans-serif;
-  font-size: 1.3em;
+  font-size: 1em;
   word-wrap: break-word;
-  width: 70%;
+  width: 40%;
   padding-left: 15vw;
 }
 
