@@ -28,35 +28,6 @@ body
   text-align: center;
 }
 
-/* .header h1 {
-  font-family: Monaco,Consolas,Lucida Console,monospace;
-  color: SandyBrown;
-  padding-left: 15vw;
-  border-right: .15em solid white;
-  transform: translateY(29vh);
-  font-size: 4vw;
-
-  white-space: nowrap;
-  overflow: hidden;
-  width: auto;
-  display: inline-block;
-  margin: 0 auto;
-  letter-spacing: .15em;
-  animation: typing 4s steps(50, end),
-			 blink-caret 1s step-end infinite;
-}
-
-@keyframes typing{
-  from {max-width: 0}
-  to {max-width: 100%}
-}
-
-@keyframes blink-caret{
-  from, to {border-color: transparent}
-  50% {border-color: SandyBrown}
-} */
-
-
 /* CURSOR */
 
 #cursor {
