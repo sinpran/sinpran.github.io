@@ -22,6 +22,12 @@ body
 	-webkit-text-size-adjust: 100%;
 }
 
+/* TEXT */
+#context {
+  font-size: 5em;
+  text-align: center;
+}
+
 /* .header h1 {
   font-family: Monaco,Consolas,Lucida Console,monospace;
   color: SandyBrown;
