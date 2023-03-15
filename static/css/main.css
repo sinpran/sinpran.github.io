@@ -202,29 +202,40 @@ body
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .container .image {
   position: relative;
   margin: 30px auto;
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  height: 200px;
   border-radius: 40px;
   box-shadow: 5px 5px 30px 7px rgba(0,0,0,0.25), -5px -5px 30px 7px rgba(0,0,0,0.22);
   cursor: pointer;
-
-  background-color : #f5f5f5;
-  
+  /* background-color: black; */
   display : flex;
-  /* flex-direction : column; */
+  flex-direction : column;
   transition : 0.3s ease-in-out;
+  align-items: center;
   z-index: 1;
 }
 
-.container .image img {
-  height: 300px;
-  width : 300px;
+.img {
+  height: 200px;
+  width : 200px;
   border-radius : 15px;
+}
+
+.title {
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+  font-size: 1.5em;
+  color: #f5f5f5;
+  z-index: 0;
 }
 
 .container .image:hover  {
