@@ -1,11 +1,14 @@
 /**
  * Screenshots a page region for visual review.
  * Usage: node tools/shoot.mjs <path> <width> <selector> <out.png>
+ * Set BASE_URL to point at production instead of the local preview.
  */
 import puppeteer from "puppeteer-core";
 
 const [path = "/", width = "1440", selector = "body", out = "/tmp/shot.png"] =
   process.argv.slice(2);
+
+const BASE = process.env.BASE_URL ?? "http://localhost:4321";
 
 const browser = await puppeteer.launch({
   executablePath: "/usr/bin/google-chrome",
@@ -15,7 +18,7 @@ const browser = await puppeteer.launch({
 
 const page = await browser.newPage();
 await page.setViewport({ width: Number(width), height: 900, deviceScaleFactor: 2 });
-await page.goto(`http://localhost:4321${path}`, { waitUntil: "networkidle0" });
+await page.goto(BASE + path, { waitUntil: "networkidle0" });
 await page.evaluate(() => document.fonts.ready);
 
 const el = await page.$(selector);
