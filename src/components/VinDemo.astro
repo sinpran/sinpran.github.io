@@ -232,7 +232,10 @@ const examples = [
           excludedList.replaceChildren(
             ...excluded.map((item) => listItem(`${item.name} — ${item.reason}`, true)),
           );
-          excludedCount.textContent = `${excluded.length} items excluded for this vehicle`;
+          excludedCount.textContent =
+            excluded.length === 1
+              ? "1 item excluded for this vehicle"
+              : `${excluded.length} items excluded for this vehicle`;
           schedule.hidden = false;
         })
         .catch(() => {
