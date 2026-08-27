@@ -33,6 +33,7 @@ typings
 # Build artifacts
 dist
 build
+.astro
 
 # Miscellaneous
 *.swp
