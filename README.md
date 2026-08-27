@@ -24,13 +24,18 @@ src/
   content/work/*.md        one file per project -> index row + detail page
   content/posts/*.md       writing; dormant until the first non-draft file
   data/site.ts             bio, links, hero copy, experience, education, skills
+  lib/vin.ts               VIN decoding: check digit, model year, origin
+  lib/maintenance.ts       the applicability filter, and vPIC field mapping
   styles/global.css        light/dark tokens, @font-face, component classes
   layouts/Base.astro       head, meta, OG, JSON-LD, preloads, pre-paint theme script
   components/Avatar.astro  monogram, or a headshot if one is present
   components/Section.astro labelled section wrapper
   components/ThemeToggle.astro
+  components/VinDemo.astro live VIN decoder, opt-in per work entry
   pages/                   index, work/[...slug], writing/[...slug], 404
-public/                    resume.pdf, og.png, favicon.svg, robots.txt
+public/                    resume.pdf, favicon.svg, robots.txt
+  og.png                   site card
+  og/<slug>.png            one card per project, committed (see Tools)
 tests/                     vitest suite (see Testing)
 tools/                     build and verification scripts (see Tools)
 ```
@@ -64,6 +69,35 @@ Colours are OKLCH and every painted text colour is checked against its actual
 background for WCAG AA, in both themes, by the test suite. Chroma has a hard sRGB
 ceiling that varies with lightness, so pushing saturation up at high lightness
 will clip.
+
+### Navigation
+
+`<ClientRouter />` swaps pages in place, and `prefetch` warms a link on hover, so
+a click has nothing left to fetch. Two things have to survive a swap:
+
+- **The theme.** A swap installs the server-rendered `<html>`, which carries no
+  `data-theme`. The head script re-applies on `astro:after-swap`, which runs
+  before the new page paints. Without it every navigation flashes light.
+- **The backdrop and the theme toggle**, via `transition:persist`. Rebuilding the
+  backdrop restarts every shape from its delay, so the whole field visibly jumps.
+  The toggle persists for a different reason: `is:inline` scripts do not re-run
+  after a swap, so a fresh button would come back inert.
+
+`navigation.test.ts` covers all three, and asserts the swap is genuinely
+client-side by checking that a marker set on `window` survives it.
+
+### The VIN demo
+
+The Vehicle Tracker page opts in with `demo: vin` in its frontmatter. It exists
+because the page claims the app filters a maintenance catalogue by what the VIN
+decodes to, and a claim you can run is worth more than a paragraph.
+
+Decoding is pure and offline — validity, check digit, model year, origin all fall
+out of the seventeen characters. The powertrain attributes the filter actually
+needs do not, so those come from NHTSA's vPIC API. That call is allowed to fail:
+the offline readout stands on its own, and the catalogue simply stays hidden.
+Tests run the offline path with the network cut, so the suite does not depend on
+a third party being up.
 
 ### The backdrop
 
@@ -102,13 +136,18 @@ files.
 `npm test` runs Vitest. `tests/global-setup.ts` builds the site and starts a
 preview server on port 4322 once for the whole run.
 
-| File | Checks | How |
-|---|---|---|
-| `structure.test.ts` | markup, metadata, content shape | parses `dist/` with linkedom |
-| `layout.test.ts` | centring, measure, overflow, tap targets | real browser, computed styles |
-| `theme.test.ts` | default, system preference, persistence, no flash | real browser |
-| `a11y.test.ts` | AA contrast in both themes, focus, landmarks | real browser |
-| `backdrop.test.ts` | decorative layer is inert, clipped, behind text, reduced-motion | real browser |
+| File                  | Checks                                                             | How                           |
+| --------------------- | ------------------------------------------------------------------ | ----------------------------- |
+| `structure.test.ts`   | markup, metadata, content shape                                    | parses `dist/` with linkedom  |
+| `layout.test.ts`      | centring, measure, overflow, tap targets                           | real browser, computed styles |
+| `theme.test.ts`       | default, system preference, persistence, no flash                  | real browser                  |
+| `a11y.test.ts`        | AA contrast in both themes, focus, landmarks                       | real browser                  |
+| `backdrop.test.ts`    | decorative layer is inert, clipped, behind text, reduced-motion    | real browser                  |
+| `navigation.test.ts`  | swap is client-side, theme and backdrop survive it, prefetch fires | real browser                  |
+| `vin.test.ts`         | check digit, charset, sections, model year, origin                 | pure, no browser              |
+| `maintenance.test.ts` | applicability filter, and what it refuses to rule out              | pure, no browser              |
+| `vin-demo.test.ts`    | offline decode, graceful vPIC failure, keyboard operation          | real browser                  |
+| `og.test.ts`          | one card per project, right size, referenced absolutely            | reads `dist/`                 |
 
 Contrast is measured on the **rendered** output rather than the token list, so a
 correct token applied to the wrong surface still fails. Colours are resolved
@@ -122,10 +161,15 @@ order.
 ## Tools
 
 ```bash
-node tools/build-og.mjs     # regenerate public/og.png
+node tools/build-og.mjs     # regenerate public/og.png and public/og/<slug>.png
 node tools/render-icon.mjs  # rasterize the Vehicle Tracker SVG icon to PNG
 node tools/shoot.mjs / 1280 light /tmp/shot.png   # screenshot; BASE_URL targets a deploy
 ```
+
+OG cards are committed rather than generated in CI: rendering them needs a Chrome
+binary, and the deploy workflow should not have to install one to publish a copy
+change. Re-run `build-og.mjs` after editing any project's `title` or `tagline` —
+`og.test.ts` will catch a missing card, but not a stale one.
 
 ## Deployment
 

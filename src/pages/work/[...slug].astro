@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
+import VinDemo from "../../components/VinDemo.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("work", ({ data }) => !data.draft);
@@ -30,6 +31,7 @@ const icon = entry.data.icon
   title={entry.data.title}
   description={entry.data.tagline}
   ogTitle={`${entry.data.title} — ${entry.data.tagline}`}
+  ogImagePath={`/og/${entry.id}.png`}
 >
   <main id="main" class="mx-auto max-w-2xl px-6 pb-24">
     <nav class="pt-12" aria-label="Breadcrumb">
@@ -65,6 +67,8 @@ const icon = entry.data.icon
     >
       {entry.data.constraint}
     </p>
+
+    {entry.data.demo === "vin" && <VinDemo />}
 
     <div class="prose-simple mt-10">
       <Content />

@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { loadBuilt } from "./helpers";
 
-const ROUTES = ["/", "/work/fitai", "/work/planit", "/work/vehicle-tracker", "/404"];
+const ROUTES = [
+  "/",
+  "/work/fitai",
+  "/work/planit",
+  "/work/vehicle-tracker",
+  "/404",
+];
 
 describe.each(ROUTES)("%s document structure", (route) => {
   const doc = loadBuilt(route);
@@ -26,23 +32,33 @@ describe.each(ROUTES)("%s document structure", (route) => {
 
   it("gives every image an alt attribute", () => {
     for (const img of doc.querySelectorAll("img")) {
-      expect(img.hasAttribute("alt"), `<img src="${img.getAttribute("src")}">`).toBe(true);
+      expect(
+        img.hasAttribute("alt"),
+        `<img src="${img.getAttribute("src")}">`,
+      ).toBe(true);
     }
   });
 
   it("gives every link discernible text", () => {
     for (const a of doc.querySelectorAll("a")) {
       const name = a.textContent?.trim() || a.getAttribute("aria-label") || "";
-      expect(name.length, `<a href="${a.getAttribute("href")}">`).toBeGreaterThan(0);
+      expect(
+        name.length,
+        `<a href="${a.getAttribute("href")}">`,
+      ).toBeGreaterThan(0);
     }
   });
 
   it("carries canonical, description and OG image", () => {
-    expect(doc.querySelector('link[rel="canonical"]')?.getAttribute("href")).toMatch(
-      /^https:\/\/sinpran\.github\.io/,
-    );
-    expect(doc.querySelector('meta[name="description"]')?.getAttribute("content")).toBeTruthy();
-    expect(doc.querySelector('meta[property="og:image"]')?.getAttribute("content")).toBeTruthy();
+    expect(
+      doc.querySelector('link[rel="canonical"]')?.getAttribute("href"),
+    ).toMatch(/^https:\/\/sinpran\.github\.io/);
+    expect(
+      doc.querySelector('meta[name="description"]')?.getAttribute("content"),
+    ).toBeTruthy();
+    expect(
+      doc.querySelector('meta[property="og:image"]')?.getAttribute("content"),
+    ).toBeTruthy();
   });
 
   it("fetches no third-party fonts, styles or scripts", () => {
@@ -69,7 +85,9 @@ describe.each(ROUTES)("%s theming contract", (route) => {
 
   it("applies the theme from a blocking inline script in the head", () => {
     const scripts = [...doc.querySelectorAll("head script")];
-    const themeScript = scripts.find((s) => (s.textContent ?? "").includes("data-theme"));
+    const themeScript = scripts.find((s) =>
+      (s.textContent ?? "").includes("data-theme"),
+    );
 
     expect(themeScript, "no inline theme script found in <head>").toBeTruthy();
     // Deferred or async would run after first paint, which is the flash.
@@ -93,7 +111,8 @@ describe.each(ROUTES)("%s theming contract", (route) => {
     expect(toggle!.tagName.toLowerCase()).toBe("button");
     expect(toggle!.getAttribute("type")).toBe("button");
 
-    const name = toggle!.getAttribute("aria-label") || toggle!.textContent?.trim() || "";
+    const name =
+      toggle!.getAttribute("aria-label") || toggle!.textContent?.trim() || "";
     expect(name.length).toBeGreaterThan(0);
   });
 });
@@ -114,13 +133,20 @@ describe("homepage content", () => {
     for (const role of roles) {
       expect(role.querySelectorAll("ul, ol")).toHaveLength(0);
       const summary = role.querySelector("[data-role-summary]");
-      expect(summary?.textContent?.trim().length, "role needs one summary line").toBeGreaterThan(0);
+      expect(
+        summary?.textContent?.trim().length,
+        "role needs one summary line",
+      ).toBeGreaterThan(0);
     }
   });
 
   it("keeps the experience section brief", () => {
     // Guards against the dense bullet lists creeping back in.
-    const text = doc.querySelector("#experience")?.textContent?.replace(/\s+/g, " ").trim() ?? "";
+    const text =
+      doc
+        .querySelector("#experience")
+        ?.textContent?.replace(/\s+/g, " ")
+        .trim() ?? "";
     expect(text.length).toBeLessThan(1200);
   });
 
@@ -129,7 +155,9 @@ describe("homepage content", () => {
     expect(items).toHaveLength(3);
 
     const hrefs = [...items].map((el) =>
-      el.matches("a") ? el.getAttribute("href") : el.querySelector("a")?.getAttribute("href"),
+      el.matches("a")
+        ? el.getAttribute("href")
+        : el.querySelector("a")?.getAttribute("href"),
     );
     expect(hrefs.sort()).toEqual([
       "/work/fitai/",

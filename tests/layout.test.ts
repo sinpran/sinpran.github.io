@@ -32,25 +32,30 @@ describe("no horizontal overflow", () => {
           window.scrollTo(0, 0);
         });
 
-        const { scrollWidth, clientWidth, offenders } = await page.evaluate((vw) => {
-          const bad: string[] = [];
-          for (const el of document.querySelectorAll("body *")) {
-            // The decorative shapes are deliberately oversized and drift past
-            // the edge; their container clips them, so they are not overflow.
-            // The scrollWidth assertion below still catches real escapes.
-            if (el.closest("[data-backdrop]")) continue;
-            const r = el.getBoundingClientRect();
-            if (r.width === 0 && r.height === 0) continue;
-            if (r.right > vw + 1 || r.left < -1) {
-              bad.push(`<${el.tagName.toLowerCase()} class="${el.className}">`);
+        const { scrollWidth, clientWidth, offenders } = await page.evaluate(
+          (vw) => {
+            const bad: string[] = [];
+            for (const el of document.querySelectorAll("body *")) {
+              // The decorative shapes are deliberately oversized and drift past
+              // the edge; their container clips them, so they are not overflow.
+              // The scrollWidth assertion below still catches real escapes.
+              if (el.closest("[data-backdrop]")) continue;
+              const r = el.getBoundingClientRect();
+              if (r.width === 0 && r.height === 0) continue;
+              if (r.right > vw + 1 || r.left < -1) {
+                bad.push(
+                  `<${el.tagName.toLowerCase()} class="${el.className}">`,
+                );
+              }
             }
-          }
-          return {
-            scrollWidth: document.documentElement.scrollWidth,
-            clientWidth: document.documentElement.clientWidth,
-            offenders: bad.slice(0, 5),
-          };
-        }, width);
+            return {
+              scrollWidth: document.documentElement.scrollWidth,
+              clientWidth: document.documentElement.clientWidth,
+              offenders: bad.slice(0, 5),
+            };
+          },
+          width,
+        );
 
         await page.close();
         expect(offenders).toEqual([]);
@@ -86,7 +91,9 @@ describe("the layout is centred", () => {
   it("centres the avatar within the page", async () => {
     const page = await openPage(browser, "/", { width: 1280 });
     const offset = await page.evaluate(() => {
-      const r = document.querySelector("[data-avatar]")!.getBoundingClientRect();
+      const r = document
+        .querySelector("[data-avatar]")!
+        .getBoundingClientRect();
       const centre = r.left + r.width / 2;
       return Math.abs(centre - window.innerWidth / 2);
     });
@@ -110,7 +117,9 @@ describe("touch targets", () => {
   it("gives the theme toggle a comfortable hit area", async () => {
     const page = await openPage(browser, "/", { width: 390 });
     const box = await page.evaluate(() => {
-      const r = document.querySelector("[data-theme-toggle]")!.getBoundingClientRect();
+      const r = document
+        .querySelector("[data-theme-toggle]")!
+        .getBoundingClientRect();
       return { w: r.width, h: r.height };
     });
     await page.close();

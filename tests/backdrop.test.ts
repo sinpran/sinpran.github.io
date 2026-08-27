@@ -22,13 +22,17 @@ describe.each(ROUTES)("%s decorative backdrop markup", (route) => {
   });
 
   it("is hidden from assistive technology", () => {
-    expect(doc.querySelector("[data-backdrop]")!.getAttribute("aria-hidden")).toBe("true");
+    expect(
+      doc.querySelector("[data-backdrop]")!.getAttribute("aria-hidden"),
+    ).toBe("true");
   });
 
   it("carries no text and no focusable children", () => {
     const backdrop = doc.querySelector("[data-backdrop]")!;
     expect(backdrop.textContent?.trim()).toBe("");
-    expect(backdrop.querySelectorAll("a, button, input, [tabindex]")).toHaveLength(0);
+    expect(
+      backdrop.querySelectorAll("a, button, input, [tabindex]"),
+    ).toHaveLength(0);
   });
 });
 
@@ -67,7 +71,10 @@ describe("the backdrop stays out of the way", () => {
     // not a decorative shape.
     const hit = await page.evaluate(() => {
       const r = document.querySelector("h1")!.getBoundingClientRect();
-      const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      const el = document.elementFromPoint(
+        r.left + r.width / 2,
+        r.top + r.height / 2,
+      );
       return el?.closest("[data-backdrop]") === null;
     });
     await page.close();
@@ -79,12 +86,14 @@ describe("the backdrop stays out of the way", () => {
     const page = await openPage(browser, "/", { width: 1440 });
     const intruders = await page.evaluate(() => {
       const column = document.querySelector("main")!.getBoundingClientRect();
-      return [...document.querySelectorAll("[data-backdrop] > *")]
-        .map((el) => el.getBoundingClientRect())
-        // Small motes drifting past the text are fine; a 100px block is not.
-        .filter((r) => r.width >= 50)
-        .filter((r) => r.right > column.left && r.left < column.right)
-        .map((r) => `${Math.round(r.width)}px at x=${Math.round(r.left)}`);
+      return (
+        [...document.querySelectorAll("[data-backdrop] > *")]
+          .map((el) => el.getBoundingClientRect())
+          // Small motes drifting past the text are fine; a 100px block is not.
+          .filter((r) => r.width >= 50)
+          .filter((r) => r.right > column.left && r.left < column.right)
+          .map((r) => `${Math.round(r.width)}px at x=${Math.round(r.left)}`)
+      );
     });
     await page.close();
 
@@ -94,18 +103,22 @@ describe("the backdrop stays out of the way", () => {
   it("leaves the document scroll area alone at every width", async () => {
     for (const width of [320, 390, 768, 1440]) {
       const page = await openPage(browser, "/", { width });
-      const { scrollWidth, clientWidth, scrollHeight } = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-        scrollHeight: document.documentElement.scrollHeight,
-      }));
+      const { scrollWidth, clientWidth, scrollHeight } = await page.evaluate(
+        () => ({
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          scrollHeight: document.documentElement.scrollHeight,
+        }),
+      );
       const withoutBackdrop = await page.evaluate(() => {
         document.querySelector("[data-backdrop]")!.remove();
         return document.documentElement.scrollHeight;
       });
       await page.close();
 
-      expect(scrollWidth, `overflowed at ${width}px`).toBeLessThanOrEqual(clientWidth);
+      expect(scrollWidth, `overflowed at ${width}px`).toBeLessThanOrEqual(
+        clientWidth,
+      );
       // A fixed layer must not lengthen the page either.
       expect(scrollHeight, `grew the page at ${width}px`).toBe(withoutBackdrop);
     }
@@ -138,7 +151,8 @@ describe("motion preferences", () => {
   it("removes the backdrop entirely under prefers-reduced-motion", async () => {
     const page = await openPage(browser, "/", { reducedMotion: true });
     const display = await page.evaluate(
-      () => getComputedStyle(document.querySelector("[data-backdrop]")!).display,
+      () =>
+        getComputedStyle(document.querySelector("[data-backdrop]")!).display,
     );
     await page.close();
 

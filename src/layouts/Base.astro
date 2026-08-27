@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import { site } from "../data/site";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Backdrop from "../components/Backdrop.astro";
@@ -17,13 +18,15 @@ interface Props {
   description?: string;
   /** Set on sub-pages so the OG card and <title> reflect the page, not the site. */
   ogTitle?: string;
+  /** Site-root path to a page-specific card, e.g. "/og/planit.png". */
+  ogImagePath?: string;
 }
 
-const { title, description = site.description, ogTitle } = Astro.props;
+const { title, description = site.description, ogTitle, ogImagePath } = Astro.props;
 
 const pageTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.role}`;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL("/og.png", Astro.site).href;
+const ogImage = new URL(ogImagePath ?? "/og.png", Astro.site).href;
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -58,19 +61,29 @@ const personSchema = {
     deferred paints the default theme first and flashes. */}
     <script is:inline>
       (() => {
-        try {
-          const stored = localStorage.getItem("theme");
-          const theme =
-            stored === "light" || stored === "dark"
-              ? stored
-              : window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light";
-          document.documentElement.setAttribute("data-theme", theme);
-          document.documentElement.style.colorScheme = theme;
-        } catch {
-          document.documentElement.setAttribute("data-theme", "light");
-        }
+        const apply = () => {
+          try {
+            const stored = localStorage.getItem("theme");
+            const theme =
+              stored === "light" || stored === "dark"
+                ? stored
+                : window.matchMedia("(prefers-color-scheme: dark)").matches
+                  ? "dark"
+                  : "light";
+            document.documentElement.setAttribute("data-theme", theme);
+            document.documentElement.style.colorScheme = theme;
+          } catch {
+            document.documentElement.setAttribute("data-theme", "light");
+          }
+        };
+
+        apply();
+
+        /* A client-side swap installs the server-rendered <html>, which carries
+           no theme attribute. astro:after-swap runs before the new page paints,
+           so re-applying here is the difference between seamless and a flash of
+           light on every navigation. */
+        document.addEventListener("astro:after-swap", apply);
       })();
     </script>
 
@@ -105,11 +118,13 @@ const personSchema = {
     <meta name="theme-color" content="#fdfcfa" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#171614" media="(prefers-color-scheme: dark)" />
 
-    <script
-      type="application/ld+json"
-      is:inline
-      set:html={JSON.stringify(personSchema)}
-    />
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify(personSchema)}
+        />
+
+        <ClientRouter />
   </head>
 
   <body>

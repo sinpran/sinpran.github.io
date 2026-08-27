@@ -5,6 +5,7 @@ order: 3
 year: "2025"
 platform: iOS · SwiftUI
 icon: vehicle-tracker.png
+demo: vin
 constraint: The catalog is filtered by what the VIN actually decodes to. An EV never shows spark plugs, and a front-wheel-drive car never shows differential fluid.
 spec:
   - label: Platform

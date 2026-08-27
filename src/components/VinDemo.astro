@@ -1,0 +1,265 @@
+---
+/*
+ * The applicability filter, running live.
+ *
+ * Structural decoding happens offline from the seventeen characters. The
+ * vehicle attributes that actually drive the filter — fuel type, drive type —
+ * need NHTSA's vPIC lookup, which is optional: if it is blocked or down, the
+ * decode still works and the catalogue simply stays unfiltered.
+ */
+/*
+ * Chosen to contrast: a petrol saloon keeps everything, the EV loses the whole
+ * combustion half of the catalogue, and the 4x4 is the only one that needs
+ * transfer case fluid. All three carry valid check digits, and the Tesla's
+ * happens to be the "X" case.
+ */
+const examples = [
+  { label: "Honda Accord", vin: "1HGCM82633A004352" },
+  { label: "Tesla Model 3", vin: "5YJ3E1EAXHF000316" },
+  { label: "Ford F-150 4x4", vin: "1FTFW1ET9DFC10312" },
+];
+---
+
+<section data-vin-demo class="border-hairline mt-10 rounded-2xl border p-5 sm:p-6">
+  <h2 class="font-sans text-[0.8125rem] font-medium tracking-[0.14em] text-ink-muted uppercase">
+    Try it
+  </h2>
+  <p class="text-ink-secondary mt-3 text-[0.9375rem] leading-relaxed">
+    The same decode and filter the app runs, in the page. Enter a VIN, or pick one:
+  </p>
+
+  <div class="mt-3 flex flex-wrap gap-2">
+    {
+      examples.map((example) => (
+        <button
+          type="button"
+          data-vin-example={example.vin}
+          class="border-hairline text-ink-secondary hover:border-accent hover:text-accent rounded-full border px-3 py-1.5 text-[0.8125rem] transition-colors"
+        >
+          {example.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <label for="vin-input" class="text-ink-muted mt-5 block text-[0.8125rem]">
+    17-character VIN
+  </label>
+  <input
+    id="vin-input"
+    data-vin-input
+    type="text"
+    autocomplete="off"
+    autocapitalize="characters"
+    spellcheck="false"
+    maxlength="17"
+    placeholder="1HGCM82633A004352"
+    class="border-hairline bg-canvas text-ink placeholder:text-ink-muted/60 focus-visible:border-accent mt-1.5 w-full rounded-lg border px-3 py-2.5 font-mono text-[0.9375rem] tracking-[0.08em] uppercase outline-none"
+  />
+
+  <p data-vin-status role="status" aria-live="polite" class="mt-3 min-h-[1.5rem] text-[0.875rem]"></p>
+
+  <div data-vin-result hidden>
+    <ol
+      data-vin-segments
+      class="mt-2 flex flex-wrap gap-1.5 font-mono text-[0.8125rem]"
+      aria-label="VIN sections"
+    >
+    </ol>
+
+    <dl data-vin-facts class="mt-5 space-y-2.5 text-[0.9375rem]"></dl>
+
+    <div data-vin-schedule class="mt-6" hidden>
+      <p class="text-ink-muted text-[0.8125rem]">
+        Maintenance catalogue, filtered to this vehicle
+      </p>
+      <ul data-vin-applicable class="mt-3 space-y-1.5 text-[0.9375rem]"></ul>
+      <details class="mt-4">
+        <summary
+          class="text-ink-muted hover:text-ink marker:text-ink-muted cursor-pointer text-[0.875rem]"
+        >
+          <span data-vin-excluded-count></span>
+        </summary>
+        <ul data-vin-excluded class="mt-3 space-y-1.5 text-[0.875rem]"></ul>
+      </details>
+    </div>
+  </div>
+
+  <noscript>
+    <p class="text-ink-muted mt-3 text-[0.875rem]">
+      This demo needs JavaScript. The rest of the page does not.
+    </p>
+  </noscript>
+</section>
+
+<script>
+  import { decodeVin } from "../lib/vin";
+  import { attributesFromVpic, filterCatalogue } from "../lib/maintenance";
+
+  const VPIC = "https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues";
+
+  function init() {
+    const root = document.querySelector<HTMLElement>("[data-vin-demo]");
+    if (!root || root.dataset.wired === "true") return;
+    root.dataset.wired = "true";
+
+    const input = root.querySelector<HTMLInputElement>("[data-vin-input]")!;
+    const status = root.querySelector<HTMLElement>("[data-vin-status]")!;
+    const result = root.querySelector<HTMLElement>("[data-vin-result]")!;
+    const segments = root.querySelector<HTMLElement>("[data-vin-segments]")!;
+    const facts = root.querySelector<HTMLElement>("[data-vin-facts]")!;
+    const schedule = root.querySelector<HTMLElement>("[data-vin-schedule]")!;
+    const applicableList = root.querySelector<HTMLElement>("[data-vin-applicable]")!;
+    const excludedList = root.querySelector<HTMLElement>("[data-vin-excluded]")!;
+    const excludedCount = root.querySelector<HTMLElement>("[data-vin-excluded-count]")!;
+
+    const SEGMENTS = [
+      { key: "wmi", label: "Maker" },
+      { key: "vds", label: "Vehicle" },
+      { key: "checkDigit", label: "Check" },
+      { key: "yearCode", label: "Year" },
+      { key: "plantCode", label: "Plant" },
+      { key: "serial", label: "Serial" },
+    ] as const;
+
+    /** Guards against a slow vPIC response overwriting a newer decode. */
+    let generation = 0;
+
+    const row = (term: string, value: string) => {
+      const wrap = document.createElement("div");
+      wrap.className = "sm:flex sm:gap-6";
+      const dt = document.createElement("dt");
+      dt.className = "text-ink-muted text-[0.875rem] sm:w-32 sm:shrink-0";
+      dt.textContent = term;
+      const dd = document.createElement("dd");
+      dd.className = "text-ink-secondary";
+      dd.textContent = value;
+      wrap.append(dt, dd);
+      return wrap;
+    };
+
+    const listItem = (text: string, muted = false) => {
+      const li = document.createElement("li");
+      li.className = muted ? "text-ink-muted" : "text-ink-secondary";
+      li.textContent = text;
+      return li;
+    };
+
+    function render(raw: string) {
+      const value = raw.trim().toUpperCase();
+      const mine = ++generation;
+
+      if (value.length === 0) {
+        status.textContent = "";
+        status.className = "mt-3 min-h-[1.5rem] text-[0.875rem]";
+        result.hidden = true;
+        return;
+      }
+
+      const decoded = decodeVin(value);
+      result.hidden = false;
+
+      segments.replaceChildren();
+      for (const { key, label } of SEGMENTS) {
+        const text = decoded[key];
+        if (!text) continue;
+        const li = document.createElement("li");
+        li.className =
+          "border-hairline rounded-md border px-2 py-1 " +
+          (key === "checkDigit" && decoded.errors.includes("checkDigit")
+            ? "border-accent text-accent"
+            : "text-ink-secondary");
+        li.innerHTML = `<span class="text-ink-muted mr-1.5 text-[0.6875rem] tracking-wide uppercase">${label}</span>`;
+        li.append(document.createTextNode(text));
+        segments.append(li);
+      }
+
+      if (decoded.valid) {
+        status.textContent = "Valid VIN. Check digit agrees.";
+        status.className = "mt-3 min-h-[1.5rem] text-[0.875rem] text-accent";
+      } else {
+        const problems: string[] = [];
+        if (decoded.errors.includes("length")) {
+          problems.push(`${value.length} of 17 characters`);
+        }
+        if (decoded.errors.includes("charset")) {
+          problems.push("contains I, O or Q, which VINs never use");
+        }
+        if (decoded.errors.includes("checkDigit")) {
+          problems.push(
+            `check digit should be ${decoded.expectedCheckDigit}, not ${decoded.checkDigit}`,
+          );
+        }
+        status.textContent = problems.join(" · ");
+        status.className = "mt-3 min-h-[1.5rem] text-[0.875rem] text-ink-muted";
+      }
+
+      facts.replaceChildren();
+      if (decoded.modelYear) facts.append(row("Model year", String(decoded.modelYear)));
+      if (decoded.manufacturer) facts.append(row("Manufacturer", decoded.manufacturer));
+      if (decoded.country) facts.append(row("Built in", decoded.country));
+
+      schedule.hidden = true;
+      if (!decoded.valid) return;
+
+      // Everything above came from the seventeen characters. The powertrain
+      // attributes the filter needs do not live in the VIN, so this part is a
+      // network call and is allowed to fail.
+      facts.append(row("Powertrain", "looking up…"));
+      const pending = facts.lastElementChild!;
+
+      fetch(`${VPIC}/${encodeURIComponent(value)}?format=json`)
+        .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+        .then((payload) => {
+          if (mine !== generation) return;
+          const record = payload?.Results?.[0];
+          if (!record) throw new Error("empty");
+
+          const attributes = attributesFromVpic(record);
+          const described = [record.FuelTypePrimary, record.DriveType]
+            .filter((v) => typeof v === "string" && v.trim().length > 0)
+            .join(" · ");
+
+          pending.replaceWith(row("Powertrain", described || "not reported"));
+          if (record.Make || record.Model) {
+            facts.append(row("Vehicle", [record.Make, record.Model].filter(Boolean).join(" ")));
+          }
+
+          const { applicable, excluded } = filterCatalogue(attributes);
+          applicableList.replaceChildren(
+            ...applicable.map((item) => listItem(`${item.name} — ${item.interval}`)),
+          );
+          excludedList.replaceChildren(
+            ...excluded.map((item) => listItem(`${item.name} — ${item.reason}`, true)),
+          );
+          excludedCount.textContent = `${excluded.length} items excluded for this vehicle`;
+          schedule.hidden = false;
+        })
+        .catch(() => {
+          if (mine !== generation) return;
+          pending.replaceWith(
+            row("Powertrain", "lookup unavailable — the offline decode above still stands"),
+          );
+        });
+    }
+
+    let timer: number | undefined;
+    input.addEventListener("input", () => {
+      window.clearTimeout(timer);
+      // Debounced so typing a VIN does not fire seventeen lookups.
+      timer = window.setTimeout(() => render(input.value), 300);
+    });
+
+    for (const button of root.querySelectorAll<HTMLElement>("[data-vin-example]")) {
+      button.addEventListener("click", () => {
+        input.value = button.dataset.vinExample!;
+        render(input.value);
+        input.focus();
+      });
+    }
+  }
+
+  init();
+  // Re-bind after a client-side navigation swaps the page in.
+  document.addEventListener("astro:page-load", init);
+</script>

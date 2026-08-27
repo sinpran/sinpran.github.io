@@ -8,6 +8,9 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://sinpran.github.io",
   integrations: [sitemap()],
+  // Hover rather than viewport: the pages are small, but prefetching every link
+  // on sight spends a visitor's bandwidth on pages they never open.
+  prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   vite: {
     plugins: [tailwindcss()],
   },

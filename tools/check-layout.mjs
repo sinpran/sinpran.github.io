@@ -43,7 +43,8 @@ for (const [name, path] of pages) {
       for (const img of document.images) img.scrollIntoView();
       const deadline = Date.now() + 5000;
       while (Date.now() < deadline) {
-        if ([...document.images].every((i) => i.complete && i.naturalWidth > 0)) break;
+        if ([...document.images].every((i) => i.complete && i.naturalWidth > 0))
+          break;
         await new Promise((r) => setTimeout(r, 100));
       }
       // Only after the loads settle. Scrolling back first cancels them.
@@ -93,7 +94,9 @@ for (const [name, path] of pages) {
     if (overflow) {
       failures++;
       for (const o of report.offenders) {
-        console.log(`         <${o.tag} class="${o.cls}"> ${o.left}..${o.right}  ${JSON.stringify(o.text)}`);
+        console.log(
+          `         <${o.tag} class="${o.cls}"> ${o.left}..${o.right}  ${JSON.stringify(o.text)}`,
+        );
       }
     }
 
@@ -106,5 +109,9 @@ for (const [name, path] of pages) {
 }
 
 await browser.close();
-console.log(failures ? `\n${failures} viewport(s) overflow` : "\nno horizontal overflow anywhere");
+console.log(
+  failures
+    ? `\n${failures} viewport(s) overflow`
+    : "\nno horizontal overflow anywhere",
+);
 process.exit(failures ? 1 : 0);

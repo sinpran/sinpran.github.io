@@ -7,7 +7,10 @@ export const BASE_URL = "http://localhost:4322";
 
 /** Parse a built page straight out of dist/, no browser needed. */
 export function loadBuilt(route: string) {
-  const file = route === "/404" ? "404.html" : join(route.replace(/^\//, ""), "index.html");
+  const file =
+    route === "/404"
+      ? "404.html"
+      : join(route.replace(/^\//, ""), "index.html");
   const html = readFileSync(join("dist", file), "utf8");
   return parseHTML(html).document;
 }
@@ -71,7 +74,9 @@ function relativeLuminance([r, g, b]: Rgb): number {
 }
 
 export function contrastRatio(a: Rgb, b: Rgb): number {
-  const [hi, lo] = [relativeLuminance(a), relativeLuminance(b)].sort((x, y) => y - x);
+  const [hi, lo] = [relativeLuminance(a), relativeLuminance(b)].sort(
+    (x, y) => y - x,
+  );
   return (hi + 0.05) / (lo + 0.05);
 }
 

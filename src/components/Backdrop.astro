@@ -29,7 +29,9 @@ const shapes = [
 ];
 ---
 
-<div data-backdrop aria-hidden="true" class="backdrop">
+<!-- Persisted across client-side navigation. Rebuilding it would restart every
+     shape from its delay, so the whole field would visibly jump on each click. -->
+<div data-backdrop transition:persist="backdrop" aria-hidden="true" class="backdrop">
   {
     shapes.map((shape) => (
       <span

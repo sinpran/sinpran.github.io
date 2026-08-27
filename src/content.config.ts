@@ -17,8 +17,10 @@ const work = defineCollection({
     icon: z.string().optional(),
     /** The pull-quote at the top of the detail page: the project's central constraint. */
     constraint: z.string(),
-    /** Rendered as the mono spec block. Order is preserved. */
+    /** Rendered as the spec block. Order is preserved. */
     spec: z.array(z.object({ label: z.string(), value: z.string() })),
+    /** Opts the entry into an interactive demo rendered above the write-up. */
+    demo: z.enum(["vin"]).optional(),
     draft: z.boolean().default(false),
   }),
 });

@@ -13,4 +13,6 @@ await sharp(svg, { density: 384 })
   .toFile(out);
 
 const { width, height, channels } = await sharp(out).metadata();
-console.log(`${out}  ${width}x${height}  ${channels}ch  ${(statSync(out).size / 1024).toFixed(1)} KB`);
+console.log(
+  `${out}  ${width}x${height}  ${channels}ch  ${(statSync(out).size / 1024).toFixed(1)} KB`,
+);

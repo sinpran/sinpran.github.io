@@ -5,8 +5,14 @@
  */
 import puppeteer from "puppeteer-core";
 
-const [, , route = "/", width = "1280", theme = "light", out = "/tmp/shot.png"] =
-  process.argv;
+const [
+  ,
+  ,
+  route = "/",
+  width = "1280",
+  theme = "light",
+  out = "/tmp/shot.png",
+] = process.argv;
 const base = process.env.BASE_URL ?? "http://localhost:4322";
 
 const browser = await puppeteer.launch({
@@ -16,15 +22,25 @@ const browser = await puppeteer.launch({
 });
 
 const page = await browser.newPage();
-await page.setViewport({ width: Number(width), height: 900, deviceScaleFactor: 2 });
-await page.evaluateOnNewDocument((t) => localStorage.setItem("theme", t), theme);
+await page.setViewport({
+  width: Number(width),
+  height: 900,
+  deviceScaleFactor: 2,
+});
+await page.evaluateOnNewDocument(
+  (t) => localStorage.setItem("theme", t),
+  theme,
+);
 await page.goto(base + route, { waitUntil: "networkidle0" });
 await page.evaluate(() => document.fonts.ready);
 // Let the lazy project icons decode before capturing.
 await page.evaluate(async () => {
   for (const img of document.images) img.scrollIntoView();
   const deadline = Date.now() + 5000;
-  while (Date.now() < deadline && ![...document.images].every((i) => i.complete)) {
+  while (
+    Date.now() < deadline &&
+    ![...document.images].every((i) => i.complete)
+  ) {
     await new Promise((r) => setTimeout(r, 100));
   }
   window.scrollTo(0, 0);

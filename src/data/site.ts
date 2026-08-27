@@ -78,7 +78,10 @@ export const site = {
     { label: "Languages", items: "Python, Go, Java, C++" },
     { label: "Infrastructure", items: "AWS, Kubernetes, Docker, Terraform" },
     { label: "Data", items: "PostgreSQL, MongoDB, ETL, gRPC / REST / GraphQL" },
-    { label: "AI tooling", items: "Claude Code, Cursor, LLM workflow orchestration" },
+    {
+      label: "AI tooling",
+      items: "Claude Code, Cursor, LLM workflow orchestration",
+    },
   ],
 } as const;
 

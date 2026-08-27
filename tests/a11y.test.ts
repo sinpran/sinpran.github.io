@@ -1,6 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { Browser } from "puppeteer-core";
-import { colourScript, contrastRatio, launchBrowser, openPage, type Rgb } from "./helpers";
+import {
+  colourScript,
+  contrastRatio,
+  launchBrowser,
+  openPage,
+  type Rgb,
+} from "./helpers";
 
 let browser: Browser;
 
@@ -19,7 +25,9 @@ afterAll(async () => {
  */
 type Sample = { fg: Rgb; bg: Rgb; size: number; sample: string };
 
-async function sampleTextColours(page: import("puppeteer-core").Page): Promise<Sample[]> {
+async function sampleTextColours(
+  page: import("puppeteer-core").Page,
+): Promise<Sample[]> {
   return page.evaluate((script) => {
     // eslint-disable-next-line no-eval
     eval(script);
@@ -44,9 +52,12 @@ async function sampleTextColours(page: import("puppeteer-core").Page): Promise<S
 
       const fg = toRgb(style.color);
       const bg = bgOf(el);
-      const size = parseFloat(style.fontSize) * (Number(style.fontWeight) >= 700 ? 1.2 : 1);
+      const size =
+        parseFloat(style.fontSize) *
+        (Number(style.fontWeight) >= 700 ? 1.2 : 1);
       const key = `${fg.join()}|${bg.join()}|${Math.round(size)}`;
-      if (!seen.has(key)) seen.set(key, { fg, bg, size, sample: text.slice(0, 40) });
+      if (!seen.has(key))
+        seen.set(key, { fg, bg, size, sample: text.slice(0, 40) });
     }
     return [...seen.values()];
   }, colourScript);
@@ -84,7 +95,8 @@ describe("keyboard access", () => {
     for (let i = 0; i < 12 && !reached; i++) {
       await page.keyboard.press("Tab");
       reached = await page.evaluate(
-        () => document.activeElement?.hasAttribute("data-theme-toggle") ?? false,
+        () =>
+          document.activeElement?.hasAttribute("data-theme-toggle") ?? false,
       );
     }
     expect(reached, "never tabbed to the theme toggle").toBe(true);
@@ -116,7 +128,9 @@ describe("keyboard access", () => {
   it("puts the skip link first in the tab order", async () => {
     const page = await openPage(browser, "/");
     await page.keyboard.press("Tab");
-    const href = await page.evaluate(() => document.activeElement?.getAttribute("href"));
+    const href = await page.evaluate(() =>
+      document.activeElement?.getAttribute("href"),
+    );
     await page.close();
 
     expect(href).toBe("#main");
@@ -128,7 +142,10 @@ describe("landmarks", () => {
     const page = await openPage(browser, "/");
     const unlabelled = await page.evaluate(() =>
       [...document.querySelectorAll("nav")]
-        .filter((n) => !n.getAttribute("aria-label") && !n.getAttribute("aria-labelledby"))
+        .filter(
+          (n) =>
+            !n.getAttribute("aria-label") && !n.getAttribute("aria-labelledby"),
+        )
         .map((n) => n.outerHTML.slice(0, 80)),
     );
     await page.close();
@@ -139,7 +156,9 @@ describe("landmarks", () => {
   it("orders headings without skipping a level", async () => {
     const page = await openPage(browser, "/");
     const levels = await page.evaluate(() =>
-      [...document.querySelectorAll("h1,h2,h3,h4,h5,h6")].map((h) => Number(h.tagName[1])),
+      [...document.querySelectorAll("h1,h2,h3,h4,h5,h6")].map((h) =>
+        Number(h.tagName[1]),
+      ),
     );
     await page.close();
 

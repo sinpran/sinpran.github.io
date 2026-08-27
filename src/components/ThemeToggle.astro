@@ -3,9 +3,12 @@
    and never becomes something else to read. */
 ---
 
+<!-- Persisting the node keeps the click handler bound; an inline script does not
+     re-run after a swap, so a fresh button would come back inert. -->
 <button
   type="button"
   data-theme-toggle
+  transition:persist="theme-toggle"
   class="border-hairline bg-surface text-ink-muted hover:text-ink fixed top-3 right-3 z-40 grid size-11 place-items-center rounded-full border transition-colors sm:top-5 sm:right-5"
   aria-label="Switch to dark theme"
   aria-pressed="false"
