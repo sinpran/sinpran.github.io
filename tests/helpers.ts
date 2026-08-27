@@ -32,7 +32,12 @@ export function launchBrowser(): Promise<Browser> {
 export async function openPage(
   browser: Browser,
   route: string,
-  opts: { width?: number; height?: number; colorScheme?: "light" | "dark" } = {},
+  opts: {
+    width?: number;
+    height?: number;
+    colorScheme?: "light" | "dark";
+    reducedMotion?: boolean;
+  } = {},
 ): Promise<Page> {
   const page = await newIsolatedPage(browser);
   await page.setViewport({
@@ -40,11 +45,15 @@ export async function openPage(
     height: opts.height ?? 900,
     deviceScaleFactor: 1,
   });
+
+  const features = [];
   if (opts.colorScheme) {
-    await page.emulateMediaFeatures([
-      { name: "prefers-color-scheme", value: opts.colorScheme },
-    ]);
+    features.push({ name: "prefers-color-scheme", value: opts.colorScheme });
   }
+  if (opts.reducedMotion) {
+    features.push({ name: "prefers-reduced-motion", value: "reduce" });
+  }
+  if (features.length) await page.emulateMediaFeatures(features);
   await page.goto(BASE_URL + route, { waitUntil: "networkidle0" });
   await page.evaluate(() => document.fonts.ready);
   return page;

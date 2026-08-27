@@ -1,0 +1,47 @@
+---
+/*
+ * The floating-shapes background from the original site: shapes drift upward,
+ * rotate, and morph from square to circle as they fade.
+ *
+ * Retuned to read as texture rather than decoration. The originals were opaque
+ * slategray on a plain page; these are the accent colour at single-digit alpha,
+ * are much slower, and start at a negative delay so the screen is already
+ * populated on load instead of filling from the bottom over the first minute.
+ *
+ * `peak` falls as `size` rises: a 140px block at the same alpha as a 16px one
+ * reads as a panel rather than a mote.
+ *
+ * The mass is pushed to the outer thirds so nothing large drifts through the
+ * reading column on a wide screen. Only the small motes cross the middle; on a
+ * phone there are no margins left to hide in, and at this alpha that is fine.
+ */
+const shapes = [
+  { left: 4, size: 140, duration: 58, delay: -34, peak: 0.5 },
+  { left: 10, size: 80, duration: 38, delay: -4, peak: 0.72 },
+  { left: 33, size: 20, duration: 26, delay: -12, peak: 1 },
+  { left: 44, size: 26, duration: 40, delay: -2, peak: 0.95 },
+  { left: 52, size: 18, duration: 30, delay: -26, peak: 1 },
+  { left: 60, size: 16, duration: 32, delay: -22, peak: 1 },
+  { left: 68, size: 22, duration: 34, delay: -20, peak: 1 },
+  { left: 78, size: 110, duration: 52, delay: -16, peak: 0.6 },
+  { left: 86, size: 128, duration: 48, delay: -10, peak: 0.55 },
+  { left: 91, size: 58, duration: 44, delay: -8, peak: 0.8 },
+];
+---
+
+<div data-backdrop aria-hidden="true" class="backdrop">
+  {
+    shapes.map((shape) => (
+      <span
+        style={`
+          left: ${shape.left}%;
+          width: ${shape.size}px;
+          height: ${shape.size}px;
+          animation-duration: ${shape.duration}s;
+          animation-delay: ${shape.delay}s;
+          --peak: ${shape.peak};
+        `}
+      />
+    ))
+  }
+</div>

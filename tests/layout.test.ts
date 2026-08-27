@@ -35,6 +35,10 @@ describe("no horizontal overflow", () => {
         const { scrollWidth, clientWidth, offenders } = await page.evaluate((vw) => {
           const bad: string[] = [];
           for (const el of document.querySelectorAll("body *")) {
+            // The decorative shapes are deliberately oversized and drift past
+            // the edge; their container clips them, so they are not overflow.
+            // The scrollWidth assertion below still catches real escapes.
+            if (el.closest("[data-backdrop]")) continue;
             const r = el.getBoundingClientRect();
             if (r.width === 0 && r.height === 0) continue;
             if (r.right > vw + 1 || r.left < -1) {

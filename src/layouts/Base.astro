@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import { site } from "../data/site";
 import ThemeToggle from "../components/ThemeToggle.astro";
+import Backdrop from "../components/Backdrop.astro";
 
 /* Both faces appear above the fold, so they are preloaded to start downloading
    alongside the stylesheet rather than after it parses. Same files the
@@ -112,6 +113,7 @@ const personSchema = {
   </head>
 
   <body>
+    <Backdrop />
     <a
       href="#main"
       class="focus:bg-accent focus:text-canvas sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:px-4 focus:py-2 focus:text-[0.875rem]"

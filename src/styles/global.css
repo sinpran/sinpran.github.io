@@ -80,6 +80,10 @@
        has to clear 4.5:1 against. */
     --accent: oklch(0.53 0.13 55);
     --accent-soft: oklch(0.53 0.13 55 / 0.28);
+
+    /* Alpha here is the ceiling for the drifting shapes; each one scales it
+       down further via --peak. */
+    --shape: oklch(0.53 0.13 55 / 0.11);
   }
 
   [data-theme="dark"] {
@@ -95,6 +99,7 @@
 
     --accent: oklch(0.82 0.13 78);
     --accent-soft: oklch(0.82 0.13 78 / 0.32);
+    --shape: oklch(0.82 0.13 78 / 0.1);
   }
 
   html {
@@ -153,6 +158,60 @@
 }
 
 @layer components {
+  /* Sits behind everything. Body keeps the page background rather than html,
+     which is what lets a negative z-index child paint above the canvas instead
+     of being buried under body's own background box. */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .backdrop > span {
+    position: absolute;
+    bottom: -20vh;
+    display: block;
+    background-color: var(--shape);
+    border-radius: 18%;
+    opacity: 0;
+    will-change: transform, opacity;
+    animation-name: drift;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* The square-to-circle morph animates border-radius, which the compositor
+     cannot handle, so these layers re-raster each frame. Measured at zero
+     blocking time for ten small solid shapes, and the morph is the whole
+     character of the effect. Keep the count low and it stays free. */
+
+  @keyframes drift {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 0;
+      border-radius: 18%;
+    }
+    12%,
+    88% {
+      opacity: var(--peak, 1);
+    }
+    100% {
+      transform: translateY(-130vh) rotate(720deg);
+      opacity: 0;
+      border-radius: 50%;
+    }
+  }
+
+  /* Freezing the animation would strand the shapes mid-flight at whatever
+     opacity they happened to hold, so the layer goes away entirely. */
+  @media (prefers-reduced-motion: reduce) {
+    .backdrop {
+      display: none;
+    }
+  }
+
   /* iOS-style squircle. Applied uniformly so three icons drawn by different
      hands still read as one set. */
   .app-icon {

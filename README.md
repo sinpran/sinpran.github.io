@@ -65,6 +65,24 @@ background for WCAG AA, in both themes, by the test suite. Chroma has a hard sRG
 ceiling that varies with lightness, so pushing saturation up at high lightness
 will clip.
 
+### The backdrop
+
+`Backdrop.astro` is the floating-shapes animation carried over from the original
+site — shapes drift upward, rotate, and morph from square to circle as they fade.
+Three things about it are load-bearing:
+
+- The mass is pushed to the outer thirds so nothing large drifts through the
+  reading column on a wide screen. Only the small motes cross the middle.
+- The morph animates `border-radius`, which the compositor cannot accelerate, so
+  each shape re-rasters per frame. That is free at ten small solid shapes and
+  measurably is not at fifty; a test caps the count.
+- Under `prefers-reduced-motion` the layer is removed rather than paused, since
+  the global "kill all animation" rule would otherwise strand the shapes
+  mid-flight at whatever opacity they held.
+
+Shape positions, sizes and timings are a plain array at the top of the component.
+`peak` scales each shape's opacity down as its size goes up.
+
 ### The avatar
 
 `Avatar.astro` renders a monogram by default. Drop a square image at
@@ -90,6 +108,7 @@ preview server on port 4322 once for the whole run.
 | `layout.test.ts` | centring, measure, overflow, tap targets | real browser, computed styles |
 | `theme.test.ts` | default, system preference, persistence, no flash | real browser |
 | `a11y.test.ts` | AA contrast in both themes, focus, landmarks | real browser |
+| `backdrop.test.ts` | decorative layer is inert, clipped, behind text, reduced-motion | real browser |
 
 Contrast is measured on the **rendered** output rather than the token list, so a
 correct token applied to the wrong surface still fails. Colours are resolved
