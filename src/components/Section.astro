@@ -1,0 +1,20 @@
+---
+interface Props {
+  id: string;
+  label: string;
+  /** Rendered small and muted beside the label, e.g. a count or an aside. */
+  note?: string;
+}
+
+const { id, label, note } = Astro.props;
+---
+
+<section id={id} class="mt-24 sm:mt-32">
+  <div class="mb-8 flex items-baseline justify-between gap-4 border-b border-hairline pb-3">
+    <h2 class="font-mono text-meta font-medium tracking-[0.18em] text-ink-muted uppercase">
+      {label}
+    </h2>
+    {note && <span class="font-mono text-meta text-ink-muted">{note}</span>}
+  </div>
+  <slot />
+</section>

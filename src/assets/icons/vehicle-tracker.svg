@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1024">
+      <stop offset="0" stop-color="#2d3e51" />
+      <stop offset="1" stop-color="#1e405f" />
+    </linearGradient>
+
+    <!-- A mask rather than gradient-filled cut-outs: the wrench sits in a
+         rotated group, and a userSpaceOnUse gradient painted inside that group
+         would rotate with it and fail to match the background. -->
+    <mask id="wrench">
+      <g transform="translate(512 512) rotate(-45) translate(-26 0)">
+        <rect x="-175" y="-33" width="270" height="66" rx="33" fill="#fff" />
+        <circle cx="135" cy="0" r="92" fill="#fff" />
+        <path d="M 150 -44 L 280 -62 L 280 62 L 150 44 Z" fill="#000" />
+        <circle cx="-140" cy="0" r="20" fill="#000" />
+      </g>
+    </mask>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)" />
+
+  <!-- Gauge arc: 270 degrees, gap centred on the bottom edge. -->
+  <path
+    d="M 299.87 724.13 A 300 300 0 1 1 724.13 724.13"
+    fill="none"
+    stroke="#d9e4f5"
+    stroke-width="64"
+    stroke-linecap="round"
+  />
+
+  <rect width="1024" height="1024" fill="#ffffff" mask="url(#wrench)" />
+</svg>
