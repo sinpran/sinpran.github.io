@@ -2,19 +2,23 @@
 interface Props {
   id: string;
   label: string;
-  /** Rendered small and muted beside the label, e.g. a count or an aside. */
-  note?: string;
 }
 
-const { id, label, note } = Astro.props;
+const { id, label } = Astro.props;
 ---
 
-<section id={id} class="mt-24 sm:mt-32">
-  <div class="mb-8 flex items-baseline justify-between gap-4 border-b border-hairline pb-3">
-    <h2 class="font-mono text-meta font-medium tracking-[0.18em] text-ink-muted uppercase">
-      {label}
-    </h2>
-    {note && <span class="font-mono text-meta text-ink-muted">{note}</span>}
-  </div>
+<section id={id} class="mt-16">
+  <h2 class="text-ink-muted mb-5 text-[0.8125rem] font-medium tracking-[0.14em] uppercase">
+    {label}
+  </h2>
   <slot />
 </section>
+
+<style>
+  /* Section labels are the one place the sans face is used at heading level;
+     the serif reads as a title and these are signposts. */
+  h2 {
+    font-family: var(--font-sans);
+    letter-spacing: 0.14em;
+  }
+</style>

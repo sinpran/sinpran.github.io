@@ -21,7 +21,7 @@ const widths = [320, 390, 768, 1440];
 
 const browser = await puppeteer.launch({
   executablePath: "/usr/bin/google-chrome",
-  headless: "new",
+  headless: true,
   args: ["--no-sandbox", "--disable-gpu", "--font-render-hinting=none"],
 });
 

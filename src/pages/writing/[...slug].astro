@@ -25,24 +25,21 @@ const published = entry.data.date.toLocaleDateString("en-US", {
 ---
 
 <Base title={entry.data.title} description={entry.data.description}>
-  <main id="main" class="mx-auto max-w-4xl px-6 pb-28 sm:px-8">
-    <nav class="pt-12 sm:pt-16" aria-label="Breadcrumb">
-      <a
-        href="/#writing"
-        class="font-mono text-meta text-ink-muted transition-colors hover:text-accent"
-      >
-        ← Writing
+  <main id="main" class="mx-auto max-w-2xl px-6 pb-24">
+    <nav class="pt-12" aria-label="Breadcrumb">
+      <a href="/#writing" class="text-ink-muted hover:text-accent text-[0.875rem] transition-colors">
+        ← Back
       </a>
     </nav>
 
-    <header class="mt-12 border-b border-hairline pb-10">
-      <p class="font-mono text-meta tracking-[0.18em] text-ink-muted uppercase">
+    <header class="mt-10 text-center">
+      <h1 class="text-title">{entry.data.title}</h1>
+      <p class="text-ink-muted mt-3 text-[0.8125rem]">
         <time datetime={entry.data.date.toISOString()}>{published}</time>
       </p>
-      <h1 class="text-heading mt-3 max-w-[24ch]">{entry.data.title}</h1>
     </header>
 
-    <div class="prose-editorial mt-12">
+    <div class="prose-simple mt-10">
       <Content />
     </div>
   </main>

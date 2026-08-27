@@ -1,41 +1,35 @@
 /**
- * Screenshots a page region for visual review.
- * Usage: node tools/shoot.mjs <path> <width> <selector> <out.png>
- * Set BASE_URL to point at production instead of the local preview.
+ * Screenshot helper for eyeballing the site.
+ *   node tools/shoot.mjs [route] [width] [theme] [out]
+ * BASE_URL env var points it at a deployed site instead of the local preview.
  */
 import puppeteer from "puppeteer-core";
 
-const [path = "/", width = "1440", selector = "body", out = "/tmp/shot.png"] =
-  process.argv.slice(2);
-
-const BASE = process.env.BASE_URL ?? "http://localhost:4321";
+const [, , route = "/", width = "1280", theme = "light", out = "/tmp/shot.png"] =
+  process.argv;
+const base = process.env.BASE_URL ?? "http://localhost:4322";
 
 const browser = await puppeteer.launch({
   executablePath: "/usr/bin/google-chrome",
-  headless: "new",
+  headless: true,
   args: ["--no-sandbox", "--disable-gpu"],
 });
 
 const page = await browser.newPage();
 await page.setViewport({ width: Number(width), height: 900, deviceScaleFactor: 2 });
-await page.goto(BASE + path, { waitUntil: "networkidle0" });
+await page.evaluateOnNewDocument((t) => localStorage.setItem("theme", t), theme);
+await page.goto(base + route, { waitUntil: "networkidle0" });
 await page.evaluate(() => document.fonts.ready);
+// Let the lazy project icons decode before capturing.
+await page.evaluate(async () => {
+  for (const img of document.images) img.scrollIntoView();
+  const deadline = Date.now() + 5000;
+  while (Date.now() < deadline && ![...document.images].every((i) => i.complete)) {
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  window.scrollTo(0, 0);
+});
 
-const el = await page.$(selector);
-if (!el) throw new Error(`no element matching ${selector}`);
-
-await el.scrollIntoView();
-await new Promise((r) => setTimeout(r, 1500));
-
-const imgs = await page.evaluate(() =>
-  [...document.images].map((i) => ({
-    src: i.currentSrc.split("/").pop(),
-    complete: i.complete,
-    natural: i.naturalWidth,
-  })),
-);
-console.table(imgs);
-
-await el.screenshot({ path: out });
-console.log(`wrote ${out}`);
+await page.screenshot({ path: out, fullPage: true });
 await browser.close();
+console.log(`${base}${route} @${width}px ${theme} -> ${out}`);

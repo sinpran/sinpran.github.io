@@ -1,0 +1,41 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import { site } from "../data/site";
+
+/* Drop a square headshot at src/assets/avatar.(jpg|jpeg|png|webp) and it
+   replaces the monogram automatically. Nothing else needs editing. */
+const candidates = import.meta.glob<{ default: ImageMetadata }>(
+  "../assets/avatar.{jpg,jpeg,png,webp}",
+  { eager: true },
+);
+const photo = Object.values(candidates)[0]?.default;
+
+const initials = site.name
+  .split(" ")
+  .map((part) => part[0])
+  .join("");
+---
+
+{
+  photo ? (
+    <Image
+      data-avatar
+      src={photo}
+      alt={`${site.name}, portrait`}
+      width={224}
+      height={224}
+      loading="eager"
+      class="border-hairline mx-auto size-28 rounded-full border object-cover"
+    />
+  ) : (
+    <div
+      data-avatar
+      class="bg-surface border-hairline text-ink-secondary font-display mx-auto grid size-28 place-items-center rounded-full border text-[2rem] leading-none tracking-[0.02em] select-none"
+      role="img"
+      aria-label={`${site.name}, monogram`}
+    >
+      {initials}
+    </div>
+  )
+}

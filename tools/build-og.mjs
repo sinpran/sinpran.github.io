@@ -21,41 +21,45 @@ const dataUri = (relPath) =>
   `data:font/woff2;base64,${readFileSync(join(root, "node_modules", relPath)).toString("base64")}`;
 
 const serif = dataUri("@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2");
-const mono = dataUri("@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2");
+const sans = dataUri("@fontsource-variable/inter/files/inter-latin-wght-normal.woff2");
 
+// Mirrors the light theme in src/styles/global.css.
 const html = `<!doctype html>
 <html><head><meta charset="utf-8"><style>
   @font-face { font-family: "Instrument Serif"; src: url(${serif}) format("woff2"); font-weight: 400; }
-  @font-face { font-family: "JetBrains Mono"; src: url(${mono}) format("woff2"); font-weight: 100 800; }
+  @font-face { font-family: "Inter"; src: url(${sans}) format("woff2-variations"); font-weight: 100 900; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    width: 1200px; height: 630px; background: #0b0a08; color: #f0eeec;
-    display: flex; flex-direction: column; justify-content: space-between;
-    padding: 72px 80px; font-family: "JetBrains Mono", monospace;
-    -webkit-font-smoothing: antialiased;
+    width: 1200px; height: 630px;
+    background: oklch(0.995 0.001 90); color: oklch(0.24 0.005 60);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 26px; padding: 72px 96px; text-align: center;
+    font-family: "Inter", sans-serif; -webkit-font-smoothing: antialiased;
   }
-  .name { font-size: 20px; letter-spacing: 0.22em; text-transform: uppercase; color: #898582; }
+  .avatar {
+    width: 116px; height: 116px; border-radius: 50%;
+    background: oklch(0.97 0.002 90); border: 1px solid oklch(0.905 0.003 90);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Instrument Serif", serif; font-size: 44px;
+    color: oklch(0.435 0.007 60); letter-spacing: 0.02em;
+  }
+  .name {
+    font-family: "Instrument Serif", serif; font-size: 76px;
+    letter-spacing: -0.015em; line-height: 1.1;
+  }
+  .role { font-size: 25px; color: oklch(0.525 0.008 60); }
   .statement {
-    font-family: "Instrument Serif", serif; font-size: 68px; line-height: 1.06;
-    letter-spacing: -0.02em; max-width: 20ch;
+    font-size: 29px; line-height: 1.5; max-width: 24ch;
+    color: oklch(0.435 0.007 60); margin-top: 6px;
   }
-  .rule { height: 1px; background: #2d2b29; margin-bottom: 28px; }
-  .footer { display: flex; align-items: center; gap: 14px; font-size: 19px; color: #b7b3b0; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; background: #f2b95a; flex: none; }
-  .accent { color: #f2b95a; }
 </style></head>
 <body>
-  <div class="name">Pranjal Sinha</div>
-  <div class="statement">Simulation, data infrastructure, and developer tooling for <span class="accent">autonomous vehicles</span>.</div>
+  <div class="avatar">PS</div>
   <div>
-    <div class="rule"></div>
-    <div class="footer">
-      <span class="dot"></span>
-      <span>Senior Software Engineer at Applied Intuition</span>
-      <span style="color:#898582">&middot;</span>
-      <span>San Francisco, CA</span>
-    </div>
+    <div class="name">Pranjal Sinha</div>
+    <div class="role">Senior Software Engineer &middot; San Francisco, CA</div>
   </div>
+  <div class="statement">Simulation, data infrastructure, and developer tooling for autonomous vehicles.</div>
 </body></html>`;
 
 const tmp = mkdtempSync(join(tmpdir(), "og-"));

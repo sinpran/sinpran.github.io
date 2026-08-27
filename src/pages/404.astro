@@ -5,18 +5,14 @@ import Base from "../layouts/Base.astro";
 <Base title="Not found" description="That page does not exist.">
   <main
     id="main"
-    class="mx-auto flex min-h-screen max-w-4xl flex-col justify-center px-6 pb-28 sm:px-8"
+    class="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 pb-24 text-center"
   >
-    <p class="font-mono text-meta tracking-[0.22em] text-ink-muted uppercase">404</p>
-    <h1 class="text-heading mt-6 max-w-[18ch]">This page does not exist.</h1>
-    <p class="mt-4 max-w-[44ch] text-[0.9375rem] leading-relaxed text-ink-secondary">
+    <h1 class="text-title">This page does not exist.</h1>
+    <p class="text-ink-secondary mx-auto mt-3 max-w-[40ch] text-[0.9375rem] leading-relaxed">
       The link may be out of date, or the page may have moved.
     </p>
-    <a
-      href="/"
-      class="text-accent decoration-accent/40 hover:decoration-accent mt-8 w-fit text-[0.9375rem] underline underline-offset-4 transition-colors"
-    >
-      Back to the homepage
-    </a>
+    <p class="mt-7">
+      <a href="/" class="link-underline text-[0.9375rem]">Back to the homepage</a>
+    </p>
   </main>
 </Base>
