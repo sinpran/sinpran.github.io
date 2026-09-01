@@ -24,7 +24,12 @@ const C = {
   estimate: "#AF52DE",
 };
 
-const ACCENT = C.protein;
+/*
+ * AccentColor.colorset: srgb(0.102, 0.510, 0.353). Distinct from Theme.calories,
+ * which is system green — the ring and the tint are deliberately different
+ * greens, so the accent must not be borrowed from the macro palette.
+ */
+const ACCENT = "#1A825A";
 
 const TABS = [
   { label: "Today", icon: "fork" },
@@ -234,7 +239,8 @@ const ITEMS = [
   },
 ];
 
-const PORTIONS = ["0.5x", "0.75x", "1x", "1.5x", "2x"];
+/* Quantity.format renders the fractional multipliers as vulgar fractions. */
+const PORTIONS = ["1/2x", "3/4x", "1x", "1.5x", "2x"];
 
 const REVIEW_CSS = `
   .sum { font-size: 14.5px; font-weight: 500; line-height: 1.35; }
@@ -257,7 +263,7 @@ const REVIEW_CSS = `
     font-size: 11.5px; font-weight: 500; padding: 4px 8px; border-radius: 999px;
     background: rgba(118,118,128,0.12);
   }
-  .cap.on { background: rgba(0,122,255,0.2); }
+  .cap.on { background: rgba(26,130,90,0.2); }
   .conf { display: flex; align-items: center; gap: 6px; font-size: 11.5px;
     color: var(--label-2); margin-top: 8px; }
   .conf i { width: 6px; height: 6px; border-radius: 50%; flex: none; }

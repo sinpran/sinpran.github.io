@@ -73,7 +73,27 @@ const PATHS = {
   hiking:
     "M13 4.5a1.6 1.6 0 100-3.2 1.6 1.6 0 000 3.2zM11 22l1.5-6-2.5-2.5V9l4-1.5 2.5 3 3 1M8 22l2-5M19 9v13",
   info: "M12 21a9 9 0 100-18 9 9 0 000 18zM12 11.5V16M12 7.8v.4",
+  /*
+   * airplane.departure: climbing fuselage above a runway. Both subpaths are
+   * closed areas — this glyph is filled, and a bare `h` line encloses nothing,
+   * so the runway has to be a thin rectangle rather than a stroke.
+   */
+  planedepart:
+    "M3.4 11.9l2-.6 3 2 4.3-1.2-4.1-6.5 2.4-.6 6.1 5.8 4.5-1.2a1.65 1.65 0 01.85 3.19L6.8 17.2zM2.8 19.3h18.4v1.5H2.8z",
+  pencil:
+    "M4 20.4l4.2-1.1L20.1 7.4a1.8 1.8 0 000-2.6l-1.4-1.4a1.8 1.8 0 00-2.6 0L4.2 15.3zM14.8 6.1l3.6 3.6",
 };
+
+/**
+ * plus.circle.fill — a filled disc with the glyph knocked out, which a single
+ * stroked path cannot express.
+ */
+export function plusCircle(size = 25, color = "currentColor") {
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none">
+    <circle cx="12" cy="12" r="10.5" fill="${color}"/>
+    <path d="M12 7.4v9.2M7.4 12h9.2" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>
+  </svg>`;
+}
 
 export function icon(
   name,

@@ -17,7 +17,7 @@ import { launchBrowser, loadBuilt, openPage } from "./helpers";
 /** Every project page that declares shots, and how many it declares. */
 const PAGES = [
   { route: "/work/fitai", count: 2 },
-  { route: "/work/planit", count: 1 },
+  { route: "/work/planit", count: 2 },
   { route: "/work/vehicle-tracker", count: 2 },
 ] as const;
 
@@ -171,12 +171,23 @@ describe("app screens: layout", () => {
     await wide.close();
   });
 
+  /*
+   * Every project currently ships a pair, so the lone-screen layout has no page
+   * of its own to load. The branch is still live — the schema allows one shot —
+   * so this reproduces what AppShots emits for a single screen (one item, and
+   * the grid left at one column) and checks it centres instead of hugging the
+   * left column the way a stray sm:grid-cols-2 would leave it.
+   */
   it("centres a lone screen rather than leaving it in the left column", async () => {
     const page = await openPage(browser, "/work/planit", {
       width: 1280,
       height: 900,
     });
     const offset = await page.evaluate(() => {
+      const list = document.querySelector("[data-shots] ul")!;
+      list.className = "mx-auto grid max-w-[34rem] grid-cols-1 gap-8";
+      while (list.children.length > 1) list.lastElementChild!.remove();
+
       const img = document
         .querySelector("[data-shots] img")!
         .getBoundingClientRect();

@@ -11,9 +11,17 @@
  * right-aligned gutter, then a tinted category dot, title, cost capsule,
  * transport line, location, description, and the Keep control.
  */
-import { escape, icon, navBar, screen, statusBar } from "./chrome.mjs";
+import {
+  escape,
+  icon,
+  navBar,
+  plusCircle,
+  screen,
+  statusBar,
+} from "./chrome.mjs";
 
-const ACCENT = "#007AFF";
+/* AccentColor.colorset, light variant: srgb(0.055, 0.455, 0.565). */
+const ACCENT = "#0E7490";
 
 /* Interest.tint, mapped to the iOS system colours SwiftUI resolves them to. */
 const TINT = {
@@ -40,11 +48,14 @@ const EXTRA = `
   .trip { background: #fff; border-radius: 16px; padding: 14px; margin-bottom: 12px;
     display: flex; align-items: center; gap: 14px; }
   .trip-badge { width: 46px; height: 46px; border-radius: 50%; flex: none;
-    background: rgba(0,122,255,0.15); color: ${ACCENT};
+    background: rgba(14,116,144,0.15); color: ${ACCENT};
     display: flex; align-items: center; justify-content: center; }
   .headline { font-size: 16.5px; font-weight: 600; letter-spacing: -0.018em; }
   .subhead { font-size: 14.5px; color: var(--label-2); margin-top: 3px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .trip-meta { display: flex; gap: 8px; margin-top: 3px; font-size: 12px;
+    color: var(--label-3); }
+  .trip-meta span { display: flex; align-items: center; gap: 4px; }
 
   .daysum { font-size: 14.5px; color: var(--label-2); line-height: 1.4; }
   .daycost { display: flex; align-items: center; gap: 6px; margin-top: 10px;
@@ -83,7 +94,7 @@ const EVENTS = [
     end: "11:00",
     cat: "culture",
     title: "Rijksmuseum",
-    cost: "€22",
+    cost: "€22.00",
     mode: "Walk",
     mins: 12,
     loc: "Museumstraat 1",
@@ -94,8 +105,8 @@ const EVENTS = [
     end: "12:30",
     cat: "food",
     title: "Lunch at Foodhallen",
-    cost: "€18",
-    mode: "Tram",
+    cost: "€18.00",
+    mode: "Public Transit",
     mins: 9,
     loc: "Bellamyplein 51",
     desc: "Indoor food hall in a converted tram depot. Good rainy-day option and quick enough to keep the afternoon intact.",
@@ -116,11 +127,55 @@ const EVENTS = [
     end: "17:00",
     cat: "art",
     title: "Van Gogh Museum",
-    cost: "€24",
-    mode: "Tram",
+    cost: "€24.00",
+    mode: "Public Transit",
     mins: 14,
     loc: "Museumplein 6",
     desc: "Timed entry booked for 15:30. The permanent collection is chronological, so an hour and a half is enough.",
+  },
+];
+
+/*
+ * TripRow: name, then destinationSummary — which really is joined with a
+ * literal " -> " — then a tertiary caption pairing total days with the trip
+ * budget. Currency goes through .formatted(.currency(code:)), so it carries
+ * cents. There is no chevron: the row is a NavigationLink inside a plain List
+ * with separators hidden, so the card is the whole affordance.
+ *
+ * The last row is deliberately a trip that has not been generated yet: the
+ * badge switches to a pencil, and the budget is optional, so the caption drops
+ * to just the day count. Both are states the real list shows.
+ */
+const TRIPS = [
+  {
+    name: "Netherlands &amp; Belgium",
+    destinations: "Amsterdam -&gt; Utrecht -&gt; Bruges",
+    days: "9 days",
+    budget: "€1,500.00",
+  },
+  {
+    name: "Northern Japan",
+    destinations: "Tokyo -&gt; Kanazawa -&gt; Sapporo",
+    days: "12 days",
+    budget: "¥380,000",
+  },
+  {
+    name: "Patagonia",
+    destinations: "El Calafate -&gt; El Chalt&eacute;n",
+    days: "7 days",
+    budget: "$2,400.00",
+  },
+  {
+    name: "Iceland Ring Road",
+    destinations: "Reykjav&iacute;k -&gt; V&iacute;k -&gt; Akureyri",
+    days: "10 days",
+    budget: "$3,100.00",
+  },
+  {
+    name: "Weekend in Lisbon",
+    destinations: "Lisbon",
+    days: "3 days",
+    draft: true,
   },
 ];
 
@@ -133,33 +188,34 @@ const trips = (fonts) =>
       ${statusBar()}
       ${navBar({
         title: "My Trips",
-        trailing: `<div style="color:${ACCENT}">${icon("plus", { size: 25, width: 2.1 })}</div>`,
+        leading: `<div style="color:${ACCENT}">${icon("gear", { size: 22, width: 1.7 })}</div>`,
+        trailing: plusCircle(25, ACCENT),
       })}
       <div class="content">
-        <div class="trip">
-          <div class="trip-badge">${icon("plane", { size: 20, width: 1.7, fill: "currentColor", stroke: "none" })}</div>
-          <div class="row-main">
-            <div class="headline">Netherlands &amp; Belgium</div>
-            <div class="subhead">Amsterdam, Bruges &middot; 9 days</div>
-          </div>
-          <div class="chev">${icon("chevron", { size: 16, width: 2.2 })}</div>
-        </div>
-        <div class="trip">
-          <div class="trip-badge">${icon("plane", { size: 20, width: 1.7, fill: "currentColor", stroke: "none" })}</div>
-          <div class="row-main">
-            <div class="headline">Northern Japan</div>
-            <div class="subhead">Tokyo, Kanazawa, Sapporo &middot; 12 days</div>
-          </div>
-          <div class="chev">${icon("chevron", { size: 16, width: 2.2 })}</div>
-        </div>
-        <div class="trip">
-          <div class="trip-badge">${icon("plane", { size: 20, width: 1.7, fill: "currentColor", stroke: "none" })}</div>
-          <div class="row-main">
-            <div class="headline">Patagonia</div>
-            <div class="subhead">El Calafate, El Chalt&eacute;n &middot; 7 days</div>
-          </div>
-          <div class="chev">${icon("chevron", { size: 16, width: 2.2 })}</div>
-        </div>
+        ${TRIPS.map(
+          (trip) => `<div class="trip">
+            <div class="trip-badge">
+              ${
+                trip.draft
+                  ? icon("pencil", { size: 18, width: 1.9 })
+                  : icon("planedepart", {
+                      size: 20,
+                      width: 1.4,
+                      fill: "currentColor",
+                      stroke: "none",
+                    })
+              }
+            </div>
+            <div class="row-main">
+              <div class="headline">${trip.name}</div>
+              <div class="subhead">${trip.destinations}</div>
+              <div class="trip-meta">
+                <span>${icon("calendar", { size: 12, width: 1.8 })} ${trip.days}</span>
+                ${trip.budget ? `<span>${icon("banknote", { size: 12, width: 1.8 })} ${trip.budget}</span>` : ""}
+              </div>
+            </div>
+          </div>`,
+        ).join("")}
       </div>
       <div class="home"></div>`,
   });
@@ -183,7 +239,7 @@ const day = (fonts) =>
             after lunch, and an early dinner near the Jordaan.
           </div>
           <div class="daycost">
-            ${icon("banknote", { size: 14, width: 1.7 })} Estimated for the day <b>€64</b>
+            ${icon("banknote", { size: 14, width: 1.7 })} Estimated for the day <b>€64.00</b>
           </div>
         </div>
 
@@ -213,6 +269,6 @@ const day = (fonts) =>
   });
 
 export const screens = [
-  { name: "planit-trips", html: trips },
+  { name: "planit-trips", html: trips, featured: true },
   { name: "planit-day", html: day, featured: true },
 ];
