@@ -7,6 +7,13 @@ platform: iOS · SwiftUI
 icon: vehicle-tracker.png
 demo: vin
 constraint: The catalog is filtered by what the VIN actually decodes to. An EV never shows spark plugs, and a front-wheel-drive car never shows differential fluid.
+shots:
+  - src: vehicle-tracker-components.png
+    alt: "The maintenance list for a 2013 Ford F-150, sorted overdue first, each row carrying a coloured status dot and the mileage it is next due at."
+    caption: "The catalogue filtered to one truck and sorted by urgency. No EV battery check, because a combustion vehicle does not have one."
+  - src: vehicle-tracker-detail.png
+    alt: "The detail sheet for an engine oil and filter change, showing the DIY difficulty, cost against a shop, the tools required, and numbered steps."
+    caption: "Every item carries the DIY route: what it costs against a shop, which tools it needs, and the order to do it in."
 spec:
   - label: Platform
     value: SwiftUI, iOS 17+, XcodeGen

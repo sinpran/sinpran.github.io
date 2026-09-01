@@ -4,6 +4,7 @@ import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import Base from "../../layouts/Base.astro";
 import VinDemo from "../../components/VinDemo.astro";
+import AppShots from "../../components/AppShots.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("work", ({ data }) => !data.draft);
@@ -67,6 +68,8 @@ const icon = entry.data.icon
     >
       {entry.data.constraint}
     </p>
+
+    {entry.data.shots && <AppShots shots={entry.data.shots} />}
 
     {entry.data.demo === "vin" && <VinDemo />}
 

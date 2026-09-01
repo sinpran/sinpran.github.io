@@ -6,6 +6,13 @@ year: "2026"
 platform: iOS · SwiftUI
 icon: fitai.png
 constraint: The app computes every number and hands it to the model as fact. The model reads and interprets. It never originates a figure.
+shots:
+  - src: fitai-today.png
+    alt: "The Today screen, showing a calorie ring with 870 kcal left at its centre, protein, carb and fat rings beneath it, and the day's logged meals below."
+    caption: "Everything is stated as remaining rather than consumed, because what is left is the number that decides the next meal."
+  - src: fitai-review.png
+    alt: "The review screen, showing three foods identified from a photo, each with its macros, a row of portion multipliers, and a coloured confidence dot."
+    caption: "Nothing reaches the diary without passing through here. Each item can be dropped or rescaled, and carries the model's own confidence."
 spec:
   - label: Platform
     value: SwiftUI, iOS 17+, XcodeGen

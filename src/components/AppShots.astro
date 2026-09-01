@@ -1,0 +1,75 @@
+---
+/*
+ * App screen mockups, shown as a pair of phone screens.
+ *
+ * The images are recreations built from each app's SwiftUI source rather than
+ * captures from a device — see tools/build-shots.mjs. They are decorative in
+ * the sense that the write-up never depends on them, so they load lazily, but
+ * each carries real alt text because the screens are the argument the page is
+ * making.
+ */
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  shots: { src: string; alt: string; caption: string }[];
+}
+
+const { shots } = Astro.props;
+
+const files = import.meta.glob<{ default: ImageMetadata }>("../assets/shots/*.png", {
+  eager: true,
+});
+
+const resolved = shots
+  .map((shot) => ({ ...shot, image: files[`../assets/shots/${shot.src}`]?.default }))
+  .filter((shot) => shot.image);
+
+/* A lone screen stays in one centred column; a pair splits once there is room. */
+const columns = resolved.length > 1 ? "sm:grid-cols-2 sm:max-w-none" : "";
+---
+
+{
+  resolved.length > 0 && (
+    <section data-shots class="mt-12" aria-label="App screens">
+      <ul class:list={["mx-auto grid max-w-[34rem] grid-cols-1 gap-8", columns]}>
+        {resolved.map((shot) => (
+          <li class="mx-auto w-full max-w-[17rem]">
+            <Image
+              src={shot.image!}
+              alt={shot.alt}
+              widths={[272, 544]}
+              sizes="(min-width: 640px) 17rem, min(17rem, 100vw - 3rem)"
+              loading="lazy"
+              decoding="async"
+              class="shot w-full"
+            />
+            <p class="text-ink-muted mt-4 text-[0.8125rem] leading-relaxed">{shot.caption}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  /*
+   * An elliptical radius rather than a single length: the horizontal and
+   * vertical percentages resolve against the width and the height, so the
+   * corner stays a true circle of the right size at any rendered width. A
+   * fixed rem value would go square on a narrow screen and blobby on a wide
+   * one.
+   */
+  .shot {
+    border-radius: 14% / 6.5%;
+    border: 1px solid var(--color-hairline);
+    background: var(--color-surface);
+  }
+
+  /* The screens are light-on-light, so in dark mode they need separating from
+     the page rather than lifting off it. */
+  :global([data-theme="dark"]) .shot {
+    border-color: color-mix(in oklab, var(--color-hairline) 100%, transparent);
+    box-shadow: 0 1px 24px rgb(0 0 0 / 0.35);
+  }
+</style>

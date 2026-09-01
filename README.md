@@ -32,6 +32,8 @@ src/
   components/Section.astro labelled section wrapper
   components/ThemeToggle.astro
   components/VinDemo.astro live VIN decoder, opt-in per work entry
+  components/AppShots.astro app screen mockups, opt-in per work entry
+  assets/shots/*.png       the mockups themselves (see App screens)
   pages/                   index, work/[...slug], writing/[...slug], 404
 public/                    resume.pdf, favicon.svg, robots.txt
   og.png                   site card
@@ -99,6 +101,38 @@ the offline readout stands on its own, and the catalogue simply stays hidden.
 Tests run the offline path with the network cut, so the suite does not depend on
 a third party being up.
 
+### App screens
+
+The phone screens on the project pages are **recreations, not captures**. The
+three apps are private and do not build here, so each screen is rebuilt in
+HTML/CSS from its own SwiftUI source and rendered through headless Chrome by
+`tools/build-shots.mjs`, one module per app under `tools/shots/`.
+
+The rule that makes them worth showing is that nothing user-visible is invented.
+Copy, navigation titles, status labels, colours and number formatting are all
+traceable to the app repo — Vehicle Tracker's rows read
+`"<status> - next due at <n> mi"` because that is what `ComponentRow` builds,
+and its accent is the literal `AccentColor.colorset` value. What _is_ invented
+is the sample data: a 2013 F-150 at 96,480 miles, an Amsterdam day, a 2,400 kcal
+training day. The truck is the same one the VIN demo decodes, so the page and
+the demo agree.
+
+Screens are opted into per project through a `shots` array in the Markdown
+frontmatter, capped at two so the pair always lays out as a clean 2-up. Each
+entry carries its own `alt` and `caption`; the alt describes the screen, the
+caption makes the argument, and `shots.test.ts` fails if they are the same
+string.
+
+`build-shots.mjs` writes only the screens flagged `featured`, so the unused ones
+stay defined — swapping one in later is an edit rather than a redraw — without
+being committed as images. `node tools/build-shots.mjs --all` renders everything
+to look at them.
+
+The corner radius is authored as `14% / 6.5%` rather than a fixed length. The
+two percentages resolve against width and height separately and land on a true
+circle for this aspect ratio, so the corner stays right at any rendered size; a
+fixed `rem` goes square on a phone and blobby on a wide screen.
+
 ### The backdrop
 
 `Backdrop.astro` is the floating-shapes animation carried over from the original
@@ -148,6 +182,7 @@ preview server on port 4322 once for the whole run.
 | `maintenance.test.ts` | applicability filter, and what it refuses to rule out              | pure, no browser              |
 | `vin-demo.test.ts`    | offline decode, graceful vPIC failure, keyboard operation          | real browser                  |
 | `og.test.ts`          | one card per project, right size, referenced absolutely            | reads `dist/`                 |
+| `shots.test.ts`       | alt text, reserved space, stacking, no unused image committed      | `dist/` + real browser        |
 
 Contrast is measured on the **rendered** output rather than the token list, so a
 correct token applied to the wrong surface still fails. Colours are resolved
@@ -162,9 +197,17 @@ order.
 
 ```bash
 node tools/build-og.mjs     # regenerate public/og.png and public/og/<slug>.png
+node tools/build-shots.mjs  # regenerate the featured app screens
+node tools/build-shots.mjs --all       # every screen, including the unused ones
+node tools/build-shots.mjs vehicle     # just the screens whose name starts with this
 node tools/render-icon.mjs  # rasterize the Vehicle Tracker SVG icon to PNG
 node tools/shoot.mjs / 1280 light /tmp/shot.png   # screenshot; BASE_URL targets a deploy
 ```
+
+`build-shots.mjs` drives Chrome through Puppeteer rather than its `--screenshot`
+flag: combining `--window-size` with `--force-device-scale-factor` yields a CSS
+viewport measured in device pixels, which silently drops whatever is anchored to
+the bottom of the layout — the tab bar, in this case.
 
 OG cards are committed rather than generated in CI: rendering them needs a Chrome
 binary, and the deploy workflow should not have to install one to publish a copy

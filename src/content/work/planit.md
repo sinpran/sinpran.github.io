@@ -6,6 +6,10 @@ year: "2025"
 platform: iOS · SwiftUI
 icon: planit.png
 constraint: Constrained decoding or nothing. The itinerary comes back as schema-valid JSON, so there is no prose parsing anywhere in the app.
+shots:
+  - src: planit-day.png
+    alt: "One day of an Amsterdam itinerary, listing four activities against a time column with category icons, cost estimates, travel modes and locations."
+    caption: "A single day as the model returned it — timed, costed, and ordered so the travel between stops makes sense."
 spec:
   - label: Platform
     value: SwiftUI, iOS 17+, XcodeGen

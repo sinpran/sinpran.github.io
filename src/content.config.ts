@@ -21,6 +21,16 @@ const work = defineCollection({
     spec: z.array(z.object({ label: z.string(), value: z.string() })),
     /** Opts the entry into an interactive demo rendered above the write-up. */
     demo: z.enum(["vin"]).optional(),
+    /**
+     * Screen mockups from src/assets/shots/, built by tools/build-shots.mjs.
+     * Capped at two so the pair always lays out as a clean 2-up.
+     */
+    shots: z
+      .array(
+        z.object({ src: z.string(), alt: z.string(), caption: z.string() }),
+      )
+      .max(2)
+      .optional(),
     draft: z.boolean().default(false),
   }),
 });
